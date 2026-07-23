@@ -728,13 +728,64 @@ const $ = (sel,ctx)=> (ctx||document).querySelector(sel);
 const $$ = (sel,ctx)=> Array.from((ctx||document).querySelectorAll(sel));
 
 /* ===================== RENDER: bind CONFIG to DOM ===================== */
+/* ===================== COLOR THEME ===================== */
+// The design uses several shades of gold and pink (light/base/deep) for
+// depth. When the user picks one "Primary Color" and "Secondary Color" in
+// the customize panel, we derive the light/deep variants automatically so
+// every button, heading, and accent across the whole page actually updates.
+function hexToHsl(hex){
+  hex = hex.replace('#','');
+  if(hex.length===3) hex = hex.split('').map(c=>c+c).join('');
+  const r = parseInt(hex.substr(0,2),16)/255;
+  const g = parseInt(hex.substr(2,2),16)/255;
+  const b = parseInt(hex.substr(4,2),16)/255;
+  const max = Math.max(r,g,b), min = Math.min(r,g,b);
+  let h,s,l = (max+min)/2;
+  if(max===min){ h=s=0; }
+  else{
+    const d = max-min;
+    s = l>0.5 ? d/(2-max-min) : d/(max+min);
+    switch(max){
+      case r: h=(g-b)/d+(g<b?6:0); break;
+      case g: h=(b-r)/d+2; break;
+      case b: h=(r-g)/d+4; break;
+    }
+    h/=6;
+  }
+  return [h*360, s*100, l*100];
+}
+function hslToHex(h,s,l){
+  s/=100; l/=100;
+  const c=(1-Math.abs(2*l-1))*s, x=c*(1-Math.abs((h/60)%2-1)), m=l-c/2;
+  let r=0,g=0,b=0;
+  if(h<60){r=c;g=x;b=0;} else if(h<120){r=x;g=c;b=0;} else if(h<180){r=0;g=c;b=x;}
+  else if(h<240){r=0;g=x;b=c;} else if(h<300){r=x;g=0;b=c;} else {r=c;g=0;b=x;}
+  const toHex = v => Math.round((v+m)*255).toString(16).padStart(2,'0');
+  return '#'+toHex(r)+toHex(g)+toHex(b);
+}
+function shade(hex, lightnessDelta){
+  try{
+    const [h,s,l] = hexToHsl(hex);
+    const newL = Math.min(96, Math.max(4, l+lightnessDelta));
+    return hslToHex(h,s,newL);
+  }catch(err){ return hex; }
+}
+function applyColorTheme(primary, secondary){
+  const root = document.documentElement.style;
+  root.setProperty('--gold', primary);
+  root.setProperty('--gold-light', shade(primary, 16));
+  root.setProperty('--gold-deep', shade(primary, -18));
+  root.setProperty('--pink', secondary);
+  root.setProperty('--pink-deep', shade(secondary, -14));
+}
+
+
 function render(){
   $$('[data-bind]').forEach(el=>{
     const key = el.getAttribute('data-bind');
     if(CONFIG[key]!==undefined) el.textContent = CONFIG[key];
   });
-  document.documentElement.style.setProperty('--gold', CONFIG.primaryColor);
-  document.documentElement.style.setProperty('--pink', CONFIG.secondaryColor);
+  applyColorTheme(CONFIG.primaryColor, CONFIG.secondaryColor);
   document.title = CONFIG.brideName+" & "+CONFIG.groomName+" — A Royal Union";
 
   $('#maps-link').href = CONFIG.mapsUrl;
