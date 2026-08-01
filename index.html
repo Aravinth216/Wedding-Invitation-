@@ -1383,8 +1383,12 @@ function buildPatchedHTML(sourceText){
   let block = sourceText.slice(start, end);
   Object.keys(CONFIG).forEach(k=>{
     const safeVal = String(CONFIG[k]).replace(/\\/g,'\\\\').replace(/"/g,'\\"');
-    const re = new RegExp('('+k+':")([^"]*)(")');
-    block = block.replace(re, '$1'+safeVal+'$3');
+    // matches key:"..." where "..." may itself contain escaped quotes (\")
+    // from a previous save, and uses a function replacer (not $1/$2 tokens)
+    // so a literal "$" inside a value (e.g. in a URL) can never be misread
+    // as a regex replacement pattern.
+    const re = new RegExp('('+k+':")((?:[^"\\\\]|\\\\.)*)(")');
+    block = block.replace(re, (match, p1, p2, p3) => p1+safeVal+p3);
   });
   return sourceText.slice(0,start) + block + sourceText.slice(end);
 }
