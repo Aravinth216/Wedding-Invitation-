@@ -1740,10 +1740,21 @@ document.addEventListener('DOMContentLoaded', ()=>{
   $('#envelope-wrap').addEventListener('keypress', e=>{ if(e.key==='Enter'||e.key===' ') openInvitation(); });
   document.body.style.overflow='hidden';
 
-  runWhatsAppIntro();
-  $('#wa-open-btn').addEventListener('click', ()=>{
+  if(isOwner){
+    // Admin mode: skip straight to the editable site — no need to sit
+    // through the WhatsApp chat + envelope every time you're just editing.
     $('#whatsapp-intro').classList.add('hidden');
-  });
+    $('#welcome').classList.add('hidden');
+    $('#site').classList.add('show');
+    document.body.style.overflow='auto';
+    observeReveals();
+    $('#hero-bg').classList.add('zoom-in');
+  } else {
+    runWhatsAppIntro();
+    $('#wa-open-btn').addEventListener('click', ()=>{
+      $('#whatsapp-intro').classList.add('hidden');
+    });
+  }
 
   $('#close-photo-popup').addEventListener('click', ()=> $('#photo-popup').style.display='none');
   $('#photo-popup').addEventListener('click', e=>{ if(e.target.id==='photo-popup') $('#photo-popup').style.display='none'; });
