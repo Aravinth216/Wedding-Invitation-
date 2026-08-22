@@ -12,14 +12,14 @@
      editor) to match your event. See the "Updating the share preview" note
      you were given separately for details.
      ========================================================================= -->
-<meta property="og:title" content="The Wedding of Pratigya & Sanjeeve">
+<meta property="og:title" content="You're Invited to Our Wedding">
 <meta property="og:description" content="You're invited! 31st August 2026 — The Leela Palace, New Delhi">
 <meta property="og:image" content="">
 <meta property="og:type" content="website">
 <meta name="description" content="You're invited! 31st August 2026 — The Leela Palace, New Delhi">
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600&family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Lora:ital,wght@0,400;0,500;1,400&family=Marcellus&family=Montserrat:wght@400;500;600;700&family=Nunito+Sans:wght@400;500;600&display=swap');
 
 :root{
   /* Default light/warm palette — overwritten at runtime by the active theme in data.js */
@@ -30,6 +30,10 @@
   --card-bg:rgba(255,255,255,0.6); --card-brd:rgba(201,151,63,0.35);
   --radius:12px;
   --ease: cubic-bezier(.22,.61,.36,1);
+  /* Default font pairing — overwritten at runtime by the chosen font preset */
+  --font-display:'Playfair Display';
+  --font-body:'Cormorant Garamond';
+  --font-mono:'Cinzel Decorative';
 }
 *{box-sizing:border-box;}
 html{scroll-behavior:smooth;}
@@ -37,14 +41,14 @@ body{
   margin:0;
   background:linear-gradient(160deg, var(--bg1), var(--bg2) 55%, var(--bg3));
   color:var(--ink);
-  font-family:'Cormorant Garamond',serif;
+  font-family:var(--font-body),serif;
   font-size:19px;
   overflow-x:hidden;
   -webkit-font-smoothing:antialiased;
   transition:background 0.6s ease, color 0.6s ease;
 }
-h1,h2,h3,.display{font-family:'Playfair Display',serif;}
-.mono{font-family:'Cinzel Decorative',serif;}
+h1,h2,h3,.display{font-family:var(--font-display),serif;}
+.mono{font-family:var(--font-mono),serif;}
 ::selection{background:var(--gold);color:#fff;}
 a{color:inherit;}
 button{font-family:inherit;cursor:pointer;}
@@ -59,7 +63,7 @@ img{max-width:100%;display:block;}
 #bg-canvas{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;}
 .section{position:relative;z-index:2;padding:100px 20px;max-width:1100px;margin:0 auto;}
 .eyebrow{
-  font-family:'Cinzel Decorative',serif; letter-spacing:.26em; text-transform:uppercase; font-size:12px;
+  font-family:var(--font-mono),serif; letter-spacing:.26em; text-transform:uppercase; font-size:12px;
   color:var(--gold-deep); opacity:.9; text-align:center; margin-bottom:14px;
 }
 .section-title{ text-align:center; font-size:clamp(30px,5vw,48px); font-weight:600; color:var(--ink); margin:0 0 8px; }
@@ -80,7 +84,7 @@ img{max-width:100%;display:block;}
 .gold-btn{
   display:inline-flex;align-items:center;gap:10px; padding:15px 32px;
   background:linear-gradient(135deg,var(--gold-light),var(--gold-deep)); color:#2c1c0d;
-  border:none; border-radius:calc(var(--radius) - 8px); font-family:'Cinzel Decorative',serif;
+  border:none; border-radius:calc(var(--radius) - 8px); font-family:var(--font-mono),serif;
   font-size:13px; letter-spacing:.14em; text-transform:uppercase; text-decoration:none;
   box-shadow:0 6px 22px rgba(160,120,50,0.35);
   transition:transform .35s var(--ease), box-shadow .35s var(--ease);
@@ -89,7 +93,7 @@ img{max-width:100%;display:block;}
 .ghost-btn{
   display:inline-flex;align-items:center;gap:8px; padding:12px 22px; background:rgba(255,255,255,0.35);
   border:1px solid var(--card-brd); color:var(--ink); border-radius:calc(var(--radius) - 6px);
-  font-family:'Cormorant Garamond',serif; font-size:16px; text-decoration:none; transition:all .3s var(--ease);
+  font-family:var(--font-body),serif; font-size:16px; text-decoration:none; transition:all .3s var(--ease);
 }
 .ghost-btn:hover{border-color:var(--gold); background:rgba(255,255,255,0.55);}
 
@@ -122,7 +126,7 @@ img{max-width:100%;display:block;}
 #guest-banner, .guest-banner-styled{
   display:none; text-align:center; padding:10px 18px; margin:0 auto 8px; max-width:340px;
   background:var(--card-bg); border:1px solid var(--card-brd); border-radius:30px;
-  font-family:'Cinzel Decorative',serif; font-size:13px; letter-spacing:.08em; color:var(--gold-deep);
+  font-family:var(--font-mono),serif; font-size:13px; letter-spacing:.08em; color:var(--gold-deep);
 }
 
 /* ================= WHATSAPP CHAT INTRO ================= */
@@ -144,10 +148,10 @@ img{max-width:100%;display:block;}
   width:40px;height:40px;border-radius:50%;flex-shrink:0;
   background:linear-gradient(135deg,var(--gold-light),var(--gold-deep));
   display:flex;align-items:center;justify-content:center;
-  font-family:'Cinzel Decorative',serif;font-size:13px;color:#2c1c0d;
+  font-family:var(--font-mono),serif;font-size:13px;color:#2c1c0d;
   background-size:cover;background-position:center;
 }
-.wa-header-name{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:17px;}
+.wa-header-name{font-family:var(--font-body),serif;font-weight:600;font-size:17px;}
 .wa-header-status{font-size:12px;color:#8696a0;}
 .wa-body{
   flex:1;overflow-y:auto;padding:16px 12px;display:flex;flex-direction:column;gap:6px;
@@ -162,7 +166,7 @@ img{max-width:100%;display:block;}
 .wa-bubble-row.received{justify-content:flex-start;}
 .wa-bubble{
   max-width:78%; padding:8px 10px 6px; border-radius:8px; position:relative;
-  font-family:'Cormorant Garamond',serif; font-size:17px; line-height:1.35; color:#111;
+  font-family:var(--font-body),serif; font-size:17px; line-height:1.35; color:#111;
   box-shadow:0 1px 1px rgba(0,0,0,0.2);
 }
 .wa-bubble-row.sent .wa-bubble{background:#d9fdd3; border-top-right-radius:2px;}
@@ -180,7 +184,7 @@ img{max-width:100%;display:block;}
 .wa-open-btn{
   padding:15px 30px;border:none;border-radius:30px;
   background:linear-gradient(135deg,var(--gold-light),var(--gold-deep)); color:#2c1c0d;
-  font-family:'Cinzel Decorative',serif;font-size:14px;letter-spacing:.08em;
+  font-family:var(--font-mono),serif;font-size:14px;letter-spacing:.08em;
   box-shadow:0 6px 22px rgba(160,120,50,0.45); animation:waPulse 2s ease-in-out infinite;
 }
 @keyframes waPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.05);}}
@@ -203,13 +207,13 @@ img{max-width:100%;display:block;}
 .seal{
   position:absolute;top:52%;left:50%;transform:translate(-50%,-50%);width:56px;height:56px;border-radius:50%;
   background:radial-gradient(circle at 35% 30%, var(--pink), var(--pink-deep) 70%);
-  display:flex;align-items:center;justify-content:center;font-family:'Cinzel Decorative',serif;font-weight:700;font-size:15px;color:#fff;
+  display:flex;align-items:center;justify-content:center;font-family:var(--font-mono),serif;font-weight:700;font-size:15px;color:#fff;
   box-shadow:0 4px 14px rgba(0,0,0,0.2); z-index:3; transition:transform .6s var(--ease), opacity .6s var(--ease);
 }
 .envelope.open .seal{transform:translate(-50%,-50%) scale(0) rotate(45deg);opacity:0;}
-.tap-label{margin-top:32px;font-family:'Cinzel Decorative',serif;letter-spacing:.18em;font-size:13px;color:var(--gold-deep);text-transform:uppercase;animation:pulse 2.4s ease-in-out infinite;}
+.tap-label{margin-top:32px;font-family:var(--font-mono),serif;letter-spacing:.18em;font-size:13px;color:var(--gold-deep);text-transform:uppercase;animation:pulse 2.4s ease-in-out infinite;}
 @keyframes pulse{0%,100%{opacity:.6;}50%{opacity:1;}}
-.welcome-sub{margin-top:16px;font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--ink-soft);font-size:15px;text-align:center;}
+.welcome-sub{margin-top:16px;font-family:var(--font-body),serif;font-style:italic;color:var(--ink-soft);font-size:15px;text-align:center;}
 
 .petal{position:fixed;top:-5%;z-index:60;pointer-events:none;}
 .scroll-spark{position:fixed;z-index:45;pointer-events:none;}
@@ -232,17 +236,36 @@ img{max-width:100%;display:block;}
 .hero-bg.zoom-in{animation:heroZoomIn 3.2s var(--ease) forwards;}
 @keyframes heroZoomIn{ from{transform:scale(1.12);} to{transform:scale(1);} }
 @media (prefers-reduced-motion: reduce){ .hero-bg{transform:scale(1);} .hero-bg.zoom-in{animation:none;} }
-.hero-bg::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg, rgba(255,248,235,0.1) 0%, rgba(255,248,235,0.0) 30%, rgba(255,248,235,0.12) 68%, rgba(255,248,235,0.5) 100%);}
-.hero-bg.has-photo::after{background:linear-gradient(180deg, rgba(255,248,235,0.04) 0%, rgba(255,248,235,0.0) 26%, rgba(255,248,235,0.08) 66%, rgba(255,248,235,0.42) 100%);}
-[data-dark="true"] .hero-bg::after{background:linear-gradient(180deg, rgba(21,12,6,0.35) 0%, rgba(21,12,6,0.1) 30%, rgba(21,12,6,0.3) 72%, rgba(21,12,6,0.72) 100%);}
+
+/* Rotating Ken-Burns photo background — cycles through gallery photos with
+   a slow pan+zoom on each, crossfading between them. Falls back to the
+   decorative motif above (.hero-bg) when no photos are configured. */
+.hero-bg-slides{position:absolute;inset:0;z-index:0;overflow:hidden;display:none;}
+.hero-bg-slide{
+  position:absolute;inset:0;background-size:cover;background-position:center 28%;
+  opacity:0;transform:scale(1.08) translate(0,0);
+  transition:opacity 1.8s ease;
+  animation:kenBurns 14s ease-in-out infinite alternate;
+}
+.hero-bg-slide.active{opacity:1;}
+@keyframes kenBurns{
+  0%{transform:scale(1.08) translate(0,0);}
+  100%{transform:scale(1.22) translate(-2.5%,-2%);}
+}
+@media (prefers-reduced-motion: reduce){ .hero-bg-slide{animation:none;transform:scale(1);} }
+
+.hero-photo-overlay{position:absolute;inset:0;z-index:0.5;pointer-events:none;
+  background:linear-gradient(180deg, rgba(255,248,235,0.1) 0%, rgba(255,248,235,0.0) 30%, rgba(255,248,235,0.12) 68%, rgba(255,248,235,0.5) 100%);}
+.hero.has-photo-bg .hero-photo-overlay{background:linear-gradient(180deg, rgba(255,248,235,0.04) 0%, rgba(255,248,235,0.0) 26%, rgba(255,248,235,0.08) 66%, rgba(255,248,235,0.42) 100%);}
+[data-dark="true"] .hero-photo-overlay{background:linear-gradient(180deg, rgba(21,12,6,0.35) 0%, rgba(21,12,6,0.1) 30%, rgba(21,12,6,0.3) 72%, rgba(21,12,6,0.72) 100%);}
 .hero > *{position:relative;z-index:1;}
-.hero .monogram{font-family:'Cinzel Decorative',serif;font-size:clamp(46px,9vw,80px);color:var(--gold-deep);line-height:1;margin-bottom:16px;}
-.hero .together{font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--ink-soft);font-size:18px;margin-bottom:10px;}
+.hero .monogram{font-family:var(--font-mono),serif;font-size:clamp(46px,9vw,80px);color:var(--gold-deep);line-height:1;margin-bottom:16px;}
+.hero .together{font-family:var(--font-body),serif;font-style:italic;color:var(--ink-soft);font-size:18px;margin-bottom:10px;}
 .hero .invite-line{max-width:520px;color:var(--ink-soft);font-size:18px;margin-bottom:24px;}
 .hero .names{font-size:clamp(42px,9vw,90px);font-weight:600;line-height:1.05;margin:6px 0;}
-.hero .amp{font-family:'Playfair Display',serif;font-style:italic;font-weight:400;color:var(--pink-deep);font-size:clamp(26px,5vw,42px);margin:6px 0;}
-.hero .sub-date{margin-top:24px;color:var(--gold-deep);font-family:'Cinzel Decorative',serif;font-size:14px;letter-spacing:.16em;text-transform:uppercase;}
-.scroll-hint{position:absolute;bottom:30px;left:50%;transform:translateX(-50%);opacity:.7;font-size:12px;letter-spacing:.2em;text-transform:uppercase;font-family:'Cinzel Decorative',serif;animation:bob 2.6s ease-in-out infinite;color:var(--ink-soft);}
+.hero .amp{font-family:var(--font-display),serif;font-style:italic;font-weight:400;color:var(--pink-deep);font-size:clamp(26px,5vw,42px);margin:6px 0;}
+.hero .sub-date{margin-top:24px;color:var(--gold-deep);font-family:var(--font-mono),serif;font-size:14px;letter-spacing:.16em;text-transform:uppercase;}
+.scroll-hint{position:absolute;bottom:30px;left:50%;transform:translateX(-50%);opacity:.7;font-size:12px;letter-spacing:.2em;text-transform:uppercase;font-family:var(--font-mono),serif;animation:bob 2.6s ease-in-out infinite;color:var(--ink-soft);}
 @keyframes bob{0%,100%{transform:translate(-50%,0);}50%{transform:translate(-50%,8px);}}
 
 /* ================= CARDS ================= */
@@ -255,12 +278,12 @@ img{max-width:100%;display:block;}
 /* ================= COUNTDOWN ================= */
 .countdown-row{display:flex;justify-content:center;gap:16px;flex-wrap:wrap;}
 .count-box{width:100px;padding:20px 0;text-align:center;}
-.count-box .num{font-family:'Playfair Display',serif;font-size:38px;color:var(--gold-deep);display:inline-block;text-shadow:0 0 12px rgba(201,151,63,0.35);animation:numGlow 2.4s ease-in-out infinite;}
+.count-box .num{font-family:var(--font-display),serif;font-size:38px;color:var(--gold-deep);display:inline-block;text-shadow:0 0 12px rgba(201,151,63,0.35);animation:numGlow 2.4s ease-in-out infinite;}
 .count-box .num.flip{animation:numFlip .5s var(--ease);}
 @keyframes numFlip{0%{transform:rotateX(90deg);opacity:.3;}100%{transform:rotateX(0deg);opacity:1;}}
 @keyframes numGlow{0%,100%{text-shadow:0 0 10px rgba(201,151,63,0.3);}50%{text-shadow:0 0 20px rgba(201,151,63,0.55);}}
 @media (prefers-reduced-motion: reduce){ .count-box .num{animation:none;} .count-box .num.flip{animation:none;} }
-.count-box .lbl{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-soft);margin-top:6px;font-family:'Cinzel Decorative',serif;}
+.count-box .lbl{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-soft);margin-top:6px;font-family:var(--font-mono),serif;}
 
 /* ================= VENUE ================= */
 .venue-box{padding:46px 28px;text-align:center;}
@@ -271,10 +294,10 @@ img{max-width:100%;display:block;}
 /* ================= RSVP ================= */
 .rsvp-form{display:grid;gap:16px;padding:40px 32px;max-width:500px;margin:0 auto;}
 .field{display:flex;flex-direction:column;gap:6px;}
-.field label{font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-deep);font-family:'Cinzel Decorative',serif;}
+.field label{font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-deep);font-family:var(--font-mono),serif;}
 .field input,.field select,.field textarea{
   background:rgba(255,255,255,0.5); border:1px solid var(--card-brd); color:var(--ink);
-  padding:12px 14px;border-radius:calc(var(--radius) - 6px);font-family:'Cormorant Garamond',serif;font-size:17px;
+  padding:12px 14px;border-radius:calc(var(--radius) - 6px);font-family:var(--font-body),serif;font-size:17px;
 }
 .field input:focus, .field textarea:focus{outline:2px solid var(--gold);outline-offset:2px;}
 .attend-row{display:flex;gap:10px;}
@@ -294,10 +317,13 @@ img{max-width:100%;display:block;}
 .gallery-track{display:flex;gap:16px;overflow-x:auto;padding:10px 4px 22px;scroll-snap-type:x mandatory;}
 .gallery-track::-webkit-scrollbar{height:6px;}
 .gallery-track::-webkit-scrollbar-thumb{background:var(--gold-deep);border-radius:6px;}
+.gallery-dots{display:flex;justify-content:center;gap:8px;margin-top:4px;}
+.gallery-dot{width:7px;height:7px;border-radius:50%;background:var(--card-brd);transition:all .3s var(--ease);cursor:pointer;}
+.gallery-dot.active{background:var(--gold);width:20px;border-radius:4px;}
 .gallery-item{flex:0 0 auto;width:min(72vw,290px);aspect-ratio:4/5;scroll-snap-align:center;border-radius:calc(var(--radius) - 2px);border:1px solid var(--card-brd);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;cursor:pointer;background:var(--card-bg);}
 .gallery-item img{width:100%;height:100%;object-fit:cover;}
 .gallery-item.placeholder{background:linear-gradient(150deg, rgba(201,151,63,0.15), transparent 70%);}
-.gallery-item .frame-label{font-family:'Cinzel Decorative',serif;font-size:12px;letter-spacing:.14em;color:var(--gold-deep);text-transform:uppercase;opacity:.85;padding:0 10px;text-align:center;}
+.gallery-item .frame-label{font-family:var(--font-mono),serif;font-size:12px;letter-spacing:.14em;color:var(--gold-deep);text-transform:uppercase;opacity:.85;padding:0 10px;text-align:center;}
 .lightbox-overlay{position:fixed;inset:0;z-index:90;background:rgba(40,25,10,0.85);display:flex;align-items:center;justify-content:center;cursor:zoom-out;padding:20px;}
 .lightbox-overlay img{max-width:90vw;max-height:85vh;border-radius:4px;}
 
@@ -312,12 +338,12 @@ img{max-width:100%;display:block;}
 /* ================= FAMILY ================= */
 .family-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:20px;}
 .family-card{padding:28px 22px;}
-.family-card h3{margin:0 0 10px;color:var(--gold-deep);font-size:19px;font-family:'Cinzel Decorative',serif;}
+.family-card h3{margin:0 0 10px;color:var(--gold-deep);font-size:19px;font-family:var(--font-mono),serif;}
 .family-card p{margin:4px 0;color:var(--ink-soft);}
 
 /* ================= BLESSINGS ================= */
 .blessings{text-align:center;padding:70px 20px;}
-.blessings p{font-family:'Playfair Display',serif;font-style:italic;font-size:clamp(21px,3.2vw,28px);max-width:620px;margin:0 auto;color:var(--ink);}
+.blessings p{font-family:var(--font-display),serif;font-style:italic;font-size:clamp(21px,3.2vw,28px);max-width:620px;margin:0 auto;color:var(--ink);}
 .hearts{margin-top:22px;font-size:20px;letter-spacing:10px;color:var(--pink-deep);opacity:.85;}
 
 .pill-row{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;}
@@ -335,9 +361,34 @@ footer p{color:var(--ink-soft);}
 /* ================= FINALE ================= */
 #finale{position:fixed;inset:0;z-index:70;background:radial-gradient(ellipse at 50% 60%, var(--bg3), var(--bg1) 75%);display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;pointer-events:none;transition:opacity 1.4s ease, visibility 1.4s;}
 #finale.show{opacity:1;visibility:visible;pointer-events:auto;}
-#finale h2{font-family:'Playfair Display',serif;font-style:italic;font-size:clamp(28px,6vw,50px);color:var(--gold-deep);text-align:center;padding:0 20px;}
-#finale .close-finale{position:absolute;top:24px;right:24px;background:rgba(255,255,255,0.5);border:1px solid var(--card-brd);color:var(--ink);width:38px;height:38px;border-radius:50%;font-size:18px;}
+#finale .close-finale{position:absolute;top:24px;right:24px;background:rgba(255,255,255,0.5);border:1px solid var(--card-brd);color:var(--ink);width:38px;height:38px;border-radius:50%;font-size:18px;z-index:2;}
 #finale-canvas{position:absolute;inset:0;}
+.finale-card{
+  position:relative;z-index:1;text-align:center;padding:38px 34px 32px;
+  background:var(--card-bg);border:1px solid var(--card-brd);border-radius:calc(var(--radius) + 4px);
+  backdrop-filter:blur(22px); box-shadow:0 20px 60px rgba(120,90,50,0.25);
+  max-width:340px;margin:0 20px;
+  opacity:0;transform:scale(.88) translateY(20px);
+  transition:opacity 1s var(--ease) .3s, transform 1s var(--ease) .3s;
+}
+#finale.show .finale-card{opacity:1;transform:scale(1) translateY(0);}
+.finale-card-photo{
+  width:96px;height:96px;border-radius:50%;margin:0 auto 14px;
+  background-size:cover;background-position:center;
+  border:3px solid var(--gold);box-shadow:0 6px 22px rgba(160,120,50,0.35);
+  display:none;
+}
+.finale-card-photo.show{display:block;}
+.finale-card-seal{
+  width:56px;height:56px;border-radius:50%;margin:0 auto 16px;
+  background:radial-gradient(circle at 35% 30%, var(--gold-light), var(--gold-deep) 75%);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-mono),serif;font-size:15px;color:#2c1c0d;
+  box-shadow:0 4px 14px rgba(0,0,0,0.2);
+}
+.finale-card-seal.hide{display:none;}
+#finale h2{font-family:var(--font-display),serif;font-style:italic;font-size:clamp(24px,5vw,34px);color:var(--gold-deep);margin:0 0 8px;}
+.finale-card-sub{font-family:var(--font-mono),serif;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft);margin:0;}
 
 /* ================= PHOTO POPUP ================= */
 #photo-popup{position:fixed;inset:0;z-index:75;background:rgba(60,40,20,0.5);display:none;align-items:center;justify-content:center;padding:20px;}
@@ -359,7 +410,7 @@ footer p{color:var(--ink-soft);}
 /* ================= CUSTOMIZE PANEL ================= */
 #customize-panel{position:fixed;top:0;right:-360px;width:340px;max-width:88vw;height:100%;z-index:80;background:rgba(255,251,244,0.98);border-left:1px solid var(--card-brd);padding:26px 22px;overflow-y:auto;transition:right .5s var(--ease);}
 #customize-panel.open{right:0;}
-#customize-panel h3{font-family:'Cinzel Decorative',serif;font-size:16px;letter-spacing:.1em;color:var(--gold-deep);margin-top:0;}
+#customize-panel h3{font-family:var(--font-mono),serif;font-size:16px;letter-spacing:.1em;color:var(--gold-deep);margin-top:0;}
 #customize-panel .field input[type=color]{padding:2px;height:38px;}
 #customize-panel .close-panel{position:absolute;top:18px;right:18px;background:none;border:none;color:var(--ink);font-size:20px;}
 #customize-panel .field{margin-bottom:14px;}
@@ -413,6 +464,8 @@ footer p{color:var(--ink-soft);}
 
   <section class="hero" id="hero">
     <div class="hero-bg" id="hero-bg"></div>
+    <div class="hero-bg-slides" id="hero-bg-slides"></div>
+    <div class="hero-photo-overlay"></div>
     <div id="guest-banner-hero"></div>
     <div class="reveal-scale in" style="transition-delay:.1s"><div class="monogram mono" id="monogram">A &amp; A</div></div>
     <p class="together reveal-scale in" data-bind="welcomeMessage" style="transition-delay:.25s">Together with our families</p>
@@ -469,6 +522,7 @@ footer p{color:var(--ink-soft);}
     <h2 class="section-title reveal" data-i18n="galleryTitle">Photo Gallery</h2>
     <p class="section-sub reveal" data-i18n="gallerySub"></p>
     <div class="gallery-track reveal" id="gallery-track"></div>
+    <div class="gallery-dots" id="gallery-dots"></div>
   </section>
 
   <section class="section" id="family">
@@ -494,7 +548,7 @@ footer p{color:var(--ink-soft);}
     <div class="glass-card reveal">
       <form class="rsvp-form" id="rsvp-form">
         <div class="field"><label data-i18n="guestNameLabel">Guest Name</label><input id="r-name" required placeholder="Your full name"></div>
-        <div class="field"><label data-i18n="mobileLabel">Mobile Number</label><input id="r-mobile" required inputmode="tel" placeholder="+91 90000 00000"></div>
+        <div class="field"><label data-i18n="mobileLabel">Mobile Number</label><input id="r-mobile" required inputmode="numeric" maxlength="10" placeholder="10-digit mobile number"><small class="field-error" id="r-mobile-error" style="display:none;color:var(--pink-deep);font-size:13px;">Please enter exactly 10 digits.</small></div>
         <div class="field"><label data-i18n="guestsLabel">Number of Guests</label><input id="r-guests" type="number" min="1" max="10" value="1" required></div>
         <div class="field">
           <label data-i18n="attendingLabel">Will Attend?</label>
@@ -565,7 +619,12 @@ footer p{color:var(--ink-soft);}
 <div id="finale">
   <canvas id="finale-canvas"></canvas>
   <button class="close-finale" id="close-finale" aria-label="Close">✕</button>
-  <h2 data-i18n="seeYou">See You There</h2>
+  <div class="finale-card">
+    <div class="finale-card-photo" id="finale-card-photo"></div>
+    <div class="finale-card-seal" id="finale-card-seal">A&amp;A</div>
+    <h2 data-i18n="seeYou">See You There</h2>
+    <p class="finale-card-sub" data-bind="displayDate"></p>
+  </div>
 </div>
 
 <!-- ============ PHOTO POPUP ============ -->
@@ -595,6 +654,7 @@ footer p{color:var(--ink-soft);}
 
   <div class="field"><label>Event Type</label><select id="cfg-eventType"></select></div>
   <div class="field"><label>Theme</label><select id="cfg-theme"></select></div>
+  <div class="field"><label>Font Style</label><select id="cfg-fontPreset"></select></div>
   <div class="field"><label>Language</label><select id="cfg-language"></select></div>
   <div class="field"><label>Event Title</label><input id="cfg-eventTitle"></div>
   <div class="field"><label>Bride / Person A Name</label><input id="cfg-brideName"></div>
@@ -640,6 +700,18 @@ footer p{color:var(--ink-soft);}
    Each theme is just a set of CSS custom properties, so adding a 9th theme
    later is a ~10-line addition, no other code changes needed.
    ========================================================================= */
+/* =========================================================================
+   FONT PRESETS — 5 curated pairings. Changing this in the admin panel swaps
+   every heading, label, and body font on the whole site at once.
+   ========================================================================= */
+const FONT_PRESETS = {
+  classicElegant:   { label:"Classic Elegant",    display:"Playfair Display", body:"Cormorant Garamond", mono:"Cinzel Decorative" },
+  royalTraditional: { label:"Royal Traditional",  display:"Cinzel",           body:"EB Garamond",        mono:"Cinzel Decorative" },
+  softRomantic:      { label:"Soft Romantic",      display:"Playfair Display", body:"Lora",               mono:"Marcellus" },
+  modernMinimal:    { label:"Modern Minimal",     display:"Poppins",          body:"Inter",              mono:"Poppins" },
+  boldContemporary: { label:"Bold Contemporary",  display:"Montserrat",       body:"Nunito Sans",        mono:"Montserrat" }
+};
+
 const THEMES = {
   luxuryCream: {
     label: "Luxury Cream",
@@ -891,9 +963,10 @@ let CONFIG = {
   "eventType": "wedding",
   "language": "en",
   "theme": "luxuryCream",
-  "eventTitle": "The Wedding of Pratigya & Sanjeeve",
-  "brideName": "Pratigya",
-  "groomName": "Sanjeeve",
+  "fontPreset": "classicElegant",
+  "eventTitle": "The Wedding of Bride & Groom",
+  "brideName": "Bride",
+  "groomName": "Groom",
   "hostNames": "",
   "welcomeMessage": "Together with our families, we joyfully invite you to celebrate our wedding",
   "footerMessage": "We look forward to celebrating this special day with you.",
@@ -906,9 +979,9 @@ let CONFIG = {
   "venueAddress": "Diplomatic Enclave, Chanakyapuri, New Delhi, 110023",
   "mapsUrl": "https://maps.google.com/?q=The+Leela+Palace+New+Delhi",
   "receptionDetails": "Grand Lawns, 8:00 PM",
-  "contactPrimaryName": "Sanjeeve",
+  "contactPrimaryName": "Groom",
   "contactPrimaryPhone": "+919999999999",
-  "contactSecondaryName": "Pratigya",
+  "contactSecondaryName": "Bride",
   "contactSecondaryPhone": "+919888888888",
   "rsvpPhone": "+919999999999",
   "brideParents": "Mr. Rajesh & Mrs. Meera Sharma",
@@ -937,6 +1010,13 @@ function applyTheme(themeKey){
   document.documentElement.setAttribute('data-dark', theme.dark ? 'true':'false');
   document.body.classList.toggle('is-dark', !!theme.dark);
 }
+function applyFontPreset(presetKey){
+  const preset = FONT_PRESETS[presetKey] || FONT_PRESETS.classicElegant;
+  const root = document.documentElement.style;
+  root.setProperty('--font-display', `'${preset.display}'`);
+  root.setProperty('--font-body', `'${preset.body}'`);
+  root.setProperty('--font-mono', `'${preset.mono}'`);
+}
 
 /* ===================== LANGUAGE ===================== */
 function applyLanguage(langKey){
@@ -959,6 +1039,7 @@ function t(key){
 /* ===================== RENDER ===================== */
 function render(){
   applyTheme(CONFIG.theme);
+  applyFontPreset(CONFIG.fontPreset);
   applyLanguage(CONFIG.language);
 
   $$('[data-bind]').forEach(el=>{
@@ -1024,16 +1105,26 @@ function render(){
   $('#bride-family').textContent = CONFIG.brideFamily||'';
   $('#groom-family').textContent = CONFIG.groomFamily||'';
 
-  // Hero background photo (falls back to decorative motif via CSS if empty)
-  const heroBg = $('#hero-bg');
-  if(CONFIG.coupleImageUrl){
-    heroBg.style.backgroundImage = `url("${CONFIG.coupleImageUrl}")`;
-    heroBg.classList.add('has-photo');
-    $('#popup-photo').src = CONFIG.coupleImageUrl;
+  // Hero background: rotates through gallery photos with a slow Ken Burns
+  // pan+zoom, crossfading between them. Falls back to a single couple photo,
+  // then to the decorative motif, if no gallery is set.
+  setupHeroSlides();
+  if(CONFIG.coupleImageUrl){ $('#popup-photo').src = CONFIG.coupleImageUrl; }
+
+  // Finale keepsake card: same photo as the popup, and the same monogram
+  // seal shown on the envelope, so the ending visually echoes the opening.
+  const finalePhoto = $('#finale-card-photo');
+  const finaleSeal = $('#finale-card-seal');
+  const finaleSource = CONFIG.coupleImageUrl || (Array.isArray(CONFIG.galleryImages) && CONFIG.galleryImages[0]);
+  if(finaleSource){
+    finalePhoto.style.backgroundImage = `url("${finaleSource}")`;
+    finalePhoto.classList.add('show');
+    finaleSeal.classList.add('hide');
   } else {
-    heroBg.style.backgroundImage = '';
-    heroBg.classList.remove('has-photo');
+    finalePhoto.classList.remove('show');
+    finaleSeal.classList.remove('hide');
   }
+  finaleSeal.textContent = $('#seal-initials').textContent;
 
   renderTimeline();
   renderGallery();
@@ -1065,6 +1156,53 @@ function renderTimeline(){
   observeReveals();
 }
 
+let heroSlideIndex = 0, heroSlideTimer = null;
+function setupHeroSlides(){
+  const container = $('#hero-bg-slides');
+  const motifBg = $('#hero-bg');
+  const hero = $('#hero');
+  container.innerHTML = '';
+  clearInterval(heroSlideTimer);
+
+  let images = [];
+  if(Array.isArray(CONFIG.galleryImages) && CONFIG.galleryImages.length){
+    images = CONFIG.galleryImages.slice(0,6);
+  } else if(CONFIG.coupleImageUrl){
+    images = [CONFIG.coupleImageUrl];
+  }
+
+  if(images.length===0){
+    // No photos configured — show the decorative motif instead.
+    container.style.display='none';
+    motifBg.style.display='';
+    hero.classList.remove('has-photo-bg');
+    return;
+  }
+
+  motifBg.style.display='none';
+  container.style.display='';
+  hero.classList.add('has-photo-bg');
+
+  images.forEach((src,i)=>{
+    const div = document.createElement('div');
+    div.className = 'hero-bg-slide' + (i===0 ? ' active':'');
+    div.style.backgroundImage = `url("${src}")`;
+    div.style.animationDelay = (i*0.6)+'s'; // stagger so multiple slides don't pan in sync
+    container.appendChild(div);
+  });
+
+  heroSlideIndex = 0;
+  if(images.length > 1){
+    heroSlideTimer = setInterval(()=>{
+      const slides = $$('.hero-bg-slide', container);
+      if(!slides.length) return;
+      slides[heroSlideIndex].classList.remove('active');
+      heroSlideIndex = (heroSlideIndex+1) % slides.length;
+      slides[heroSlideIndex].classList.add('active');
+    }, 6000);
+  }
+}
+
 function renderGallery(){
   const track = $('#gallery-track');
   track.innerHTML='';
@@ -1078,6 +1216,7 @@ function renderGallery(){
       track.appendChild(div);
     });
     startGalleryAutoSlide();
+    setupGalleryDots(labels.length);
     observeReveals();
     return;
   }
@@ -1091,7 +1230,34 @@ function renderGallery(){
     track.appendChild(div);
   });
   startGalleryAutoSlide();
+  setupGalleryDots(images.length);
   observeReveals();
+}
+function setupGalleryDots(count){
+  const dotsWrap = $('#gallery-dots');
+  const track = $('#gallery-track');
+  dotsWrap.innerHTML = '';
+  if(count<2){ dotsWrap.style.display='none'; return; }
+  dotsWrap.style.display='flex';
+  for(let i=0;i<count;i++){
+    const dot = document.createElement('div');
+    dot.className = 'gallery-dot' + (i===0?' active':'');
+    dot.addEventListener('click', ()=>{
+      const item = track.children[i];
+      if(item) track.scrollTo({left:item.offsetLeft - 4, behavior:'smooth'});
+    });
+    dotsWrap.appendChild(dot);
+  }
+  let dotSyncTimer=null;
+  track.addEventListener('scroll', ()=>{
+    clearTimeout(dotSyncTimer);
+    dotSyncTimer = setTimeout(()=>{
+      if(!track.children.length) return;
+      const itemWidth = track.children[0].getBoundingClientRect().width + 16;
+      const idx = Math.round(track.scrollLeft / itemWidth);
+      $$('.gallery-dot', dotsWrap).forEach((d,i)=> d.classList.toggle('active', i===idx));
+    }, 80);
+  },{passive:true});
 }
 let galleryAutoTimer=null;
 function startGalleryAutoSlide(){
@@ -1297,9 +1463,11 @@ function smoothScrollToY(targetY, onDone){
     if(!autoScrolling){ return; }
     const current = window.scrollY;
     const diff = targetY - current;
-    if(Math.abs(diff) < 2){ window.scrollTo(0,targetY); onDone(); return; }
-    // ~2x faster than the original pace, still eased for smoothness
-    window.scrollBy(0, diff * 0.14);
+    if(Math.abs(diff) < 2){ window.scrollTo({top:targetY, behavior:'auto'}); onDone(); return; }
+    // ~2x faster than the original pace, eased by us — behavior:'auto' stops
+    // this from fighting the page's CSS scroll-behavior:smooth, which was
+    // silently cancelling almost all of this motion before.
+    window.scrollTo({top: current + diff*0.14, behavior:'auto'});
     autoScrollRAF = requestAnimationFrame(step);
   }
   autoScrollRAF = requestAnimationFrame(step);
@@ -1395,6 +1563,7 @@ function fadeAudioTo(targetVol, durationMs){
 }
 
 function tryPlayAudio(){
+  clearTimeout(musicStopTimer);
   const vol = savedVolume/100;
   if(CONFIG.backgroundMusicUrl){
     if(audioEl.src !== CONFIG.backgroundMusicUrl) audioEl.src = CONFIG.backgroundMusicUrl;
@@ -1407,17 +1576,23 @@ function tryPlayAudio(){
     }catch(err){ console.warn('Ambient audio unavailable', err); }
   }
 }
+let musicStopTimer=null;
 document.addEventListener('DOMContentLoaded', ()=>{
   $('#volume-range').value = savedVolume;
   $('#music-btn').addEventListener('click', ()=>{
+    clearTimeout(musicStopTimer); // cancel any pending stop from a previous quick tap
     if(musicPlaying){
-      // smooth fade out, then actually pause/suspend once silent
-      fadeAudioTo(0, 500);
-      setTimeout(()=>{
-        if(CONFIG.backgroundMusicUrl) audioEl.pause(); else stopAmbient();
-      }, 520);
       musicPlaying=false; $('#music-btn').textContent='♪';
-    } else { tryPlayAudio(); }
+      fadeAudioTo(0, 500);
+      musicStopTimer = setTimeout(()=>{
+        // only actually stop if the user hasn't restarted it again meanwhile
+        if(!musicPlaying){
+          if(CONFIG.backgroundMusicUrl) audioEl.pause(); else stopAmbient();
+        }
+      }, 520);
+    } else {
+      tryPlayAudio();
+    }
     $('#volume-pop').classList.toggle('show');
   });
   $('#volume-range').addEventListener('input', e=>{
@@ -1540,11 +1715,23 @@ document.addEventListener('DOMContentLoaded', ()=>{
     $$('.attend-opt').forEach(o=>o.classList.remove('active'));
     opt.classList.add('active'); attendChoice = opt.dataset.val;
   });
+  // Only digits, capped at 10 as the guest types — prevents entering a
+  // country code or a too-short/too-long number in the first place.
+  $('#r-mobile').addEventListener('input', e=>{
+    e.target.value = e.target.value.replace(/[^\d]/g,'').slice(0,10);
+    $('#r-mobile-error').style.display='none';
+  });
   $('#rsvp-form').addEventListener('submit', e=>{
     e.preventDefault();
     const name = $('#r-name').value.trim();
     const mobile = $('#r-mobile').value.trim();
     const guests = $('#r-guests').value;
+
+    if(!/^\d{10}$/.test(mobile)){
+      $('#r-mobile-error').style.display='block';
+      $('#r-mobile').focus();
+      return;
+    }
 
     const msg = `Hello,\nMy name is ${name}.\n\nAttendance: ${attendChoice}\nGuests: ${guests}\n\n`
       + (attendChoice==='Yes' ? 'We are excited to attend.' : attendChoice==='Maybe' ? 'We will confirm soon.' : 'We are sorry we cannot make it.')
@@ -1658,6 +1845,13 @@ function initOwnerPanel(){
     opt.value=key; opt.textContent=THEMES[key].label;
     themeSelect.appendChild(opt);
   });
+  const fontSelect = $('#cfg-fontPreset');
+  Object.keys(FONT_PRESETS).forEach(key=>{
+    const opt = document.createElement('option');
+    opt.value=key; opt.textContent=FONT_PRESETS[key].label;
+    fontSelect.appendChild(opt);
+  });
+  fontSelect.addEventListener('change', ()=> applyFontPreset(fontSelect.value)); // live preview as you pick
   const langSelect = $('#cfg-language');
   Object.keys(STRINGS).forEach(key=>{
     const opt = document.createElement('option');
@@ -1732,28 +1926,45 @@ function buildPatchedHTML(sourceText){
 
 /* ===================== INIT ===================== */
 document.addEventListener('DOMContentLoaded', ()=>{
-  render();
-  initOwnerPanel();
-  resize(); initField(); draw();
+  // Decide + apply the WhatsApp-intro-vs-skip choice FIRST, before anything
+  // else runs. This used to happen only after render()/initOwnerPanel() had
+  // already executed — if either of those ever threw partway through for
+  // any reason, this decision would never be reached and admin mode would
+  // silently fall back to always showing the WhatsApp intro. Now it can't.
+  let ownerModeDetected = false;
+  try{
+    const params = new URLSearchParams(location.search);
+    ownerModeDetected = params.get('edit') === CONFIG.ownerKey && !!CONFIG.ownerKey;
+  }catch(err){ console.error('Owner-mode URL check failed:', err); }
 
-  $('#envelope-wrap').addEventListener('click', openInvitation);
-  $('#envelope-wrap').addEventListener('keypress', e=>{ if(e.key==='Enter'||e.key===' ') openInvitation(); });
-  document.body.style.overflow='hidden';
-
-  if(isOwner){
-    // Admin mode: skip straight to the editable site — no need to sit
-    // through the WhatsApp chat + envelope every time you're just editing.
+  if(ownerModeDetected){
+    isOwner = true;
     $('#whatsapp-intro').classList.add('hidden');
     $('#welcome').classList.add('hidden');
     $('#site').classList.add('show');
     document.body.style.overflow='auto';
-    observeReveals();
-    $('#hero-bg').classList.add('zoom-in');
   } else {
-    runWhatsAppIntro();
-    $('#wa-open-btn').addEventListener('click', ()=>{
-      $('#whatsapp-intro').classList.add('hidden');
-    });
+    document.body.style.overflow='hidden';
+  }
+
+  try{ render(); }catch(err){ console.error('render() failed:', err); }
+  try{ initOwnerPanel(); }catch(err){ console.error('initOwnerPanel() failed:', err); }
+  try{ resize(); initField(); draw(); }catch(err){ console.error('Background canvas failed:', err); }
+
+  try{
+    $('#envelope-wrap').addEventListener('click', openInvitation);
+    $('#envelope-wrap').addEventListener('keypress', e=>{ if(e.key==='Enter'||e.key===' ') openInvitation(); });
+  }catch(err){ console.error('Envelope binding failed:', err); }
+
+  if(ownerModeDetected){
+    try{ observeReveals(); $('#hero-bg').classList.add('zoom-in'); }catch(err){ console.error('Owner-mode reveal failed:', err); }
+  } else {
+    try{
+      runWhatsAppIntro();
+      $('#wa-open-btn').addEventListener('click', ()=>{
+        $('#whatsapp-intro').classList.add('hidden');
+      });
+    }catch(err){ console.error('WhatsApp intro failed:', err); }
   }
 
   $('#close-photo-popup').addEventListener('click', ()=> $('#photo-popup').style.display='none');
