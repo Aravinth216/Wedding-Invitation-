@@ -215,7 +215,7 @@ img{max-width:100%;display:block;}
 @keyframes pulse{0%,100%{opacity:.6;}50%{opacity:1;}}
 .welcome-sub{margin-top:16px;font-family:var(--font-body),serif;font-style:italic;color:var(--ink-soft);font-size:15px;text-align:center;}
 
-.petal{position:fixed;top:-5%;z-index:60;pointer-events:none;}
+.petal{position:fixed;top:-5%;z-index:72;pointer-events:none;}
 .scroll-spark{position:fixed;z-index:45;pointer-events:none;}
 
 /* ================= SITE / HERO ================= */
@@ -373,20 +373,22 @@ footer p{color:var(--ink-soft);}
 }
 #finale.show .finale-card{opacity:1;transform:scale(1) translateY(0);}
 .finale-card-photo{
-  width:96px;height:96px;border-radius:50%;margin:0 auto 14px;
+  width:110px;height:110px;border-radius:50%;margin:0 auto 12px;
   background-size:cover;background-position:center;
   border:3px solid var(--gold);box-shadow:0 6px 22px rgba(160,120,50,0.35);
-  display:none;
+  display:flex;align-items:center;justify-content:center;overflow:hidden;
+  background-color:var(--card-bg);
+  color:var(--gold-deep);
+  position:relative;
 }
-.finale-card-photo.show{display:block;}
+.finale-card-photo svg{width:56%;height:56%;opacity:.75;}
 .finale-card-seal{
-  width:56px;height:56px;border-radius:50%;margin:0 auto 16px;
+  width:44px;height:44px;border-radius:50%;margin:0 auto 16px;
   background:radial-gradient(circle at 35% 30%, var(--gold-light), var(--gold-deep) 75%);
   display:flex;align-items:center;justify-content:center;
-  font-family:var(--font-mono),serif;font-size:15px;color:#2c1c0d;
+  font-family:var(--font-mono),serif;font-size:13px;color:#2c1c0d;
   box-shadow:0 4px 14px rgba(0,0,0,0.2);
 }
-.finale-card-seal.hide{display:none;}
 #finale h2{font-family:var(--font-display),serif;font-style:italic;font-size:clamp(24px,5vw,34px);color:var(--gold-deep);margin:0 0 8px;}
 .finale-card-sub{font-family:var(--font-mono),serif;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft);margin:0;}
 
@@ -671,11 +673,12 @@ footer p{color:var(--ink-soft);}
   <div class="field"><label>Venue Address</label><input id="cfg-venueAddress"></div>
   <div class="field"><label>Google Maps Link</label><input id="cfg-mapsUrl"></div>
   <div class="field"><label>Reception Details</label><input id="cfg-receptionDetails"></div>
+  <div class="field"><label>Country Code</label><input id="cfg-countryCode" placeholder="+91"></div>
   <div class="field"><label>Contact Primary Name</label><input id="cfg-contactPrimaryName"></div>
-  <div class="field"><label>Contact Primary Phone</label><input id="cfg-contactPrimaryPhone"></div>
+  <div class="field"><label>Contact Primary Phone (10 digits, no country code)</label><input id="cfg-contactPrimaryPhone" class="phone-10" inputmode="numeric" maxlength="10" placeholder="9999999999"></div>
   <div class="field"><label>Contact Secondary Name</label><input id="cfg-contactSecondaryName"></div>
-  <div class="field"><label>Contact Secondary Phone</label><input id="cfg-contactSecondaryPhone"></div>
-  <div class="field"><label>RSVP Receiving Phone</label><input id="cfg-rsvpPhone"></div>
+  <div class="field"><label>Contact Secondary Phone (10 digits, no country code)</label><input id="cfg-contactSecondaryPhone" class="phone-10" inputmode="numeric" maxlength="10" placeholder="9888888888"></div>
+  <div class="field"><label>RSVP Receiving Phone (10 digits, no country code)</label><input id="cfg-rsvpPhone" class="phone-10" inputmode="numeric" maxlength="10" placeholder="9999999999"></div>
   <div class="field"><label>Bride's Parents</label><input id="cfg-brideParents"></div>
   <div class="field"><label>Groom's Parents</label><input id="cfg-groomParents"></div>
   <div class="field"><label>Bride's Family</label><input id="cfg-brideFamily"></div>
@@ -980,10 +983,11 @@ let CONFIG = {
   "mapsUrl": "https://maps.google.com/?q=The+Leela+Palace+New+Delhi",
   "receptionDetails": "Grand Lawns, 8:00 PM",
   "contactPrimaryName": "Groom",
-  "contactPrimaryPhone": "+919999999999",
+  "countryCode": "+91",
+  "contactPrimaryPhone": "9999999999",
   "contactSecondaryName": "Bride",
-  "contactSecondaryPhone": "+919888888888",
-  "rsvpPhone": "+919999999999",
+  "contactSecondaryPhone": "9888888888",
+  "rsvpPhone": "9999999999",
   "brideParents": "Mr. Rajesh & Mrs. Meera Sharma",
   "groomParents": "Mr. Vikram & Mrs. Kavita Malhotra",
   "brideFamily": "Sharma & Kapoor Households, New Delhi",
@@ -1037,6 +1041,16 @@ function t(key){
 }
 
 /* ===================== RENDER ===================== */
+/* Every phone field in CONFIG stores just the raw 10-digit number — the
+   country code (CONFIG.countryCode, e.g. "+91") is combined on here so
+   tel:/WhatsApp links always come out correct regardless of format. */
+function fullPhone(tenDigits){
+  return (CONFIG.countryCode||'+91') + String(tenDigits||'').replace(/[^\d]/g,'');
+}
+function fullPhoneDigitsOnly(tenDigits){
+  return fullPhone(tenDigits).replace(/[^\d]/g,'');
+}
+
 function render(){
   applyTheme(CONFIG.theme);
   applyFontPreset(CONFIG.fontPreset);
@@ -1084,15 +1098,16 @@ function render(){
   $('#share-whatsapp').href = `https://wa.me/?text=${shareMsg}`;
   $('#share-facebook').href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(pageUrl)}`;
 
-  // Contact
-  $('#call-primary').href = 'tel:'+CONFIG.contactPrimaryPhone;
+  // Contact — numbers are stored as plain 10-digit values; the country
+  // code is combined on here so links always work regardless of format.
+  $('#call-primary').href = 'tel:'+fullPhone(CONFIG.contactPrimaryPhone);
   $('#call-primary-label').textContent = t('callLabel')+' '+(CONFIG.contactPrimaryName||'');
-  $('#wa-primary').href = 'https://wa.me/'+String(CONFIG.contactPrimaryPhone||'').replace(/[^\d]/g,'');
+  $('#wa-primary').href = 'https://wa.me/'+fullPhoneDigitsOnly(CONFIG.contactPrimaryPhone);
   $('#wa-primary-label').textContent = t('whatsappLabel')+' '+(CONFIG.contactPrimaryName||'');
   if(CONFIG.contactSecondaryPhone){
-    $('#call-secondary').href = 'tel:'+CONFIG.contactSecondaryPhone;
+    $('#call-secondary').href = 'tel:'+fullPhone(CONFIG.contactSecondaryPhone);
     $('#call-secondary-label').textContent = t('callLabel')+' '+(CONFIG.contactSecondaryName||'');
-    $('#wa-secondary').href = 'https://wa.me/'+String(CONFIG.contactSecondaryPhone||'').replace(/[^\d]/g,'');
+    $('#wa-secondary').href = 'https://wa.me/'+fullPhoneDigitsOnly(CONFIG.contactSecondaryPhone);
     $('#wa-secondary-label').textContent = t('whatsappLabel')+' '+(CONFIG.contactSecondaryName||'');
     $('#contact-secondary-wrap').style.display='';
   } else {
@@ -1111,18 +1126,32 @@ function render(){
   setupHeroSlides();
   if(CONFIG.coupleImageUrl){ $('#popup-photo').src = CONFIG.coupleImageUrl; }
 
-  // Finale keepsake card: same photo as the popup, and the same monogram
-  // seal shown on the envelope, so the ending visually echoes the opening.
+  // Finale keepsake card: same photo as the popup. If no photo has been set
+  // yet, show an elegant default floral motif instead — an original, simple
+  // vector illustration (not a stock photo of people) so the ending still
+  // looks complete before the customer uploads their own picture.
   const finalePhoto = $('#finale-card-photo');
   const finaleSeal = $('#finale-card-seal');
   const finaleSource = CONFIG.coupleImageUrl || (Array.isArray(CONFIG.galleryImages) && CONFIG.galleryImages[0]);
+  const DEFAULT_PHOTO_MOTIF = `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <g fill="currentColor">
+      <ellipse cx="50" cy="32" rx="7" ry="15"/>
+      <ellipse cx="50" cy="68" rx="7" ry="15"/>
+      <ellipse cx="32" cy="50" rx="15" ry="7"/>
+      <ellipse cx="68" cy="50" rx="15" ry="7"/>
+      <ellipse cx="37" cy="37" rx="7" ry="13" transform="rotate(45 37 37)"/>
+      <ellipse cx="63" cy="37" rx="7" ry="13" transform="rotate(-45 63 37)"/>
+      <ellipse cx="37" cy="63" rx="7" ry="13" transform="rotate(-45 37 63)"/>
+      <ellipse cx="63" cy="63" rx="7" ry="13" transform="rotate(45 63 63)"/>
+    </g>
+    <circle cx="50" cy="50" r="8" fill="currentColor" opacity="0.9"/>
+  </svg>`;
   if(finaleSource){
     finalePhoto.style.backgroundImage = `url("${finaleSource}")`;
-    finalePhoto.classList.add('show');
-    finaleSeal.classList.add('hide');
+    finalePhoto.innerHTML = '';
   } else {
-    finalePhoto.classList.remove('show');
-    finaleSeal.classList.remove('hide');
+    finalePhoto.style.backgroundImage = '';
+    finalePhoto.innerHTML = DEFAULT_PHOTO_MOTIF;
   }
   finaleSeal.textContent = $('#seal-initials').textContent;
 
@@ -1425,6 +1454,38 @@ function spawnPetals(count){
         {transform:`translate(${drift}px, ${window.innerHeight+40}px) rotate(${300+Math.random()*300}deg)`, opacity:.15}
       ],{duration, easing:'ease-in'}).onfinish = ()=> p.remove();
     }, i*80);
+  }
+}
+
+/* A concentrated flower shower that falls specifically over one element
+   (used for the finale's couple photo) rather than the whole screen —
+   gives the "flowers pouring over the couple" moment its own focal point. */
+function spawnPetalsOverElement(el, count){
+  if(!el) return;
+  for(let i=0;i<count;i++){
+    setTimeout(()=>{
+      const rect = el.getBoundingClientRect();
+      if(rect.width===0) return; // element not visible, skip
+      const p = document.createElement('div');
+      p.className='petal';
+      const size = 6+Math.random()*7;
+      const startX = rect.left + Math.random()*rect.width;
+      const startY = rect.top - 40 - Math.random()*60;
+      p.style.left = startX+'px';
+      p.style.top = startY+'px';
+      p.style.width = size+'px'; p.style.height = size*.8+'px';
+      p.style.background = Math.random()>.5 ? 'var(--pink)' : 'var(--gold-light)';
+      p.style.borderRadius='0 100% 0 100%';
+      p.style.transform = `rotate(${Math.random()*360}deg)`;
+      p.style.boxShadow = '0 0 6px rgba(212,175,102,0.5)';
+      document.body.appendChild(p);
+      const fallDistance = rect.height + 220 + Math.random()*80;
+      const drift = (Math.random()-.5)*60;
+      p.animate([
+        {transform:'translate(0,0) rotate(0deg)', opacity:.95},
+        {transform:`translate(${drift}px, ${fallDistance}px) rotate(${240+Math.random()*260}deg)`, opacity:.1}
+      ],{duration:2200+Math.random()*1200, easing:'ease-in'}).onfinish = ()=> p.remove();
+    }, i*110);
   }
 }
 
@@ -1736,7 +1797,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
     const msg = `Hello,\nMy name is ${name}.\n\nAttendance: ${attendChoice}\nGuests: ${guests}\n\n`
       + (attendChoice==='Yes' ? 'We are excited to attend.' : attendChoice==='Maybe' ? 'We will confirm soon.' : 'We are sorry we cannot make it.')
       + `\n\nThank you.`;
-    const waNumber = String(CONFIG.rsvpPhone||CONFIG.contactPrimaryPhone||'').replace(/[^\d]/g,'');
+    const waNumber = fullPhoneDigitsOnly(CONFIG.rsvpPhone||CONFIG.contactPrimaryPhone||'');
 
     // Success animation shown first…
     $('#rsvp-form').style.display='none';
@@ -1808,6 +1869,9 @@ function openFinale(){
   if(!reduceMotion){
     finaleLoop(); fireworkInterval=setInterval(launchFirework,550); launchFirework();
     for(let i=0;i<14;i++){ setTimeout(()=>spawnScrollSpark(), i*140); } // extra golden particle flourish
+    // Flowers pouring specifically over the couple's photo, once the
+    // keepsake card has finished animating into view (card reveal ~1.3s).
+    setTimeout(()=> spawnPetalsOverElement($('#finale-card-photo'), 16), 900);
   }
   spawnPetals(18);
 }
@@ -1832,6 +1896,15 @@ function readOwnerPanel(){
       CONFIG[k]=el.value;
     }
   });
+}
+function panelPhonesAreValid(){
+  const invalid = $$('.phone-10').filter(el => el.value.trim()!=='' && !/^\d{10}$/.test(el.value.trim()));
+  if(invalid.length){
+    invalid[0].focus();
+    alert('Phone numbers must be exactly 10 digits (no country code, no spaces). Please fix: ' + invalid.map(el=>el.previousElementSibling ? el.previousElementSibling.textContent : el.id).join(', '));
+    return false;
+  }
+  return true;
 }
 function initOwnerPanel(){
   const params = new URLSearchParams(location.search);
@@ -1865,11 +1938,22 @@ function initOwnerPanel(){
     eventSelect.appendChild(opt);
   });
 
+  // Every phone field in the panel: only digits, capped at 10, live as you type.
+  $$('.phone-10').forEach(input=>{
+    input.addEventListener('input', e=>{
+      e.target.value = e.target.value.replace(/[^\d]/g,'').slice(0,10);
+    });
+  });
+
   $('#customize-btn').addEventListener('click', ()=>{ fillOwnerPanel(); $('#customize-panel').classList.add('open'); });
   $('#close-customize').addEventListener('click', ()=> $('#customize-panel').classList.remove('open'));
-  $('#apply-customize').addEventListener('click', ()=>{ readOwnerPanel(); render(); $('#customize-panel').classList.remove('open'); });
+  $('#apply-customize').addEventListener('click', ()=>{
+    if(!panelPhonesAreValid()) return;
+    readOwnerPanel(); render(); $('#customize-panel').classList.remove('open');
+  });
   $('#reset-customize').addEventListener('click', ()=> location.reload());
   $('#save-customize').addEventListener('click', async ()=>{
+    if(!panelPhonesAreValid()) return;
     readOwnerPanel();
     render();
     const status = $('#save-status');
