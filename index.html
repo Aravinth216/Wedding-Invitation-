@@ -419,6 +419,26 @@ footer p{color:var(--ink-soft);}
 #customize-panel small{color:var(--ink-soft);display:block;margin-top:-6px;margin-bottom:16px;line-height:1.4;}
 #customize-panel textarea{min-height:80px;resize:vertical;}
 
+#video-panel{position:fixed;top:0;right:-360px;width:340px;max-width:88vw;height:100%;z-index:80;background:rgba(255,251,244,0.98);border-left:1px solid var(--card-brd);padding:26px 22px;overflow-y:auto;transition:right .5s var(--ease);}
+#video-panel.open{right:0;}
+#video-panel h3{font-family:var(--font-mono),serif;font-size:16px;letter-spacing:.1em;color:var(--gold-deep);margin-top:0;}
+#video-panel .close-panel{position:absolute;top:18px;right:18px;background:none;border:none;color:var(--ink);font-size:20px;}
+#video-panel .field{margin-bottom:14px;}
+#video-panel small{color:var(--ink-soft);display:block;margin-top:-6px;margin-bottom:16px;line-height:1.4;}
+#video-panel textarea{min-height:70px;resize:vertical;}
+.video-tabs{display:flex;gap:8px;margin-bottom:18px;}
+.video-tab{flex:1;padding:10px 6px;border-radius:20px;border:1px solid var(--card-brd);background:rgba(255,255,255,0.5);font-family:var(--font-mono),serif;font-size:11px;letter-spacing:.04em;color:var(--ink);cursor:pointer;}
+.video-tab.active{background:linear-gradient(135deg,var(--pink),var(--pink-deep));color:#fff;border-color:transparent;}
+.video-tab-panel{display:none;}
+.video-tab-panel.active{display:block;}
+.video-photo-slot{display:flex;align-items:center;gap:10px;margin-bottom:14px;padding:8px;border:1px solid var(--card-brd);border-radius:10px;background:rgba(255,255,255,0.4);}
+.video-photo-slot img{width:52px;height:52px;object-fit:cover;border-radius:8px;background:#e8e0d2;flex-shrink:0;}
+.video-photo-slot .vp-label{flex:1;font-size:12px;color:var(--ink-soft);}
+.video-photo-slot input[type=file]{width:100%;font-size:10px;margin-top:4px;}
+#video-canvas-wrap{display:flex;justify-content:center;margin:14px 0;}
+#video-canvas{width:100%;max-width:200px;aspect-ratio:9/16;background:#000;border-radius:10px;}
+#video-status{color:var(--gold-deep);text-align:center;margin-top:10px;font-size:13px;line-height:1.4;min-height:1px;}
+
 @media (max-width:640px){
   .section{padding:70px 16px;}
   .count-box{width:76px;padding:14px 0;}
@@ -645,7 +665,7 @@ footer p{color:var(--ink-soft);}
     <button class="fab" id="music-btn" aria-label="Toggle music">♪</button>
   </div>
   <button class="fab" id="customize-btn" aria-label="Customize" style="display:none;">⚙</button>
-  <button class="fab" id="autoscroll-btn" aria-label="Auto-scroll tour" title="Auto-scroll tour">▶</button>
+  <button class="fab" id="create-video-btn" aria-label="Create Video" title="Create Video" style="display:none;">🎬</button>
 </div>
 
 <!-- ============ CUSTOMIZE / OWNER PANEL ============ -->
@@ -694,6 +714,51 @@ footer p{color:var(--ink-soft);}
   <button class="ghost-btn apply-btn" id="reset-customize" style="justify-content:center;width:100%;margin-top:10px;">Reset (Reload)</button>
   <button class="gold-btn apply-btn" id="save-customize" style="border:none;justify-content:center;width:100%;margin-top:14px;background:linear-gradient(135deg,var(--pink),var(--pink-deep));">💾 Save &amp; Download Updated Page</button>
   <small id="save-status" style="display:none;color:var(--gold-deep);text-align:center;margin-top:10px;"></small>
+</div>
+
+<!-- ============ VIDEO CREATOR PANEL (owner only) ============ -->
+<div id="video-panel">
+  <button class="close-panel" id="close-video">✕</button>
+  <h3>Create Video Invitation</h3>
+  <small>For YOU only — this doesn't touch the website. Fill in the details and photos, tap <strong>Preview</strong> to watch it once, then <strong>Generate Video</strong> to download a real video file to send your customer.</small>
+
+  <div class="video-tabs">
+    <button type="button" class="video-tab active" data-vtab="details">Aa Change Details</button>
+    <button type="button" class="video-tab" data-vtab="image">🖼 Change Image</button>
+  </div>
+
+  <div class="video-tab-panel active" id="vtab-details">
+    <div class="field"><label>Message</label><textarea id="vid-message"></textarea></div>
+    <div class="field"><label>Groom Name</label><input id="vid-groomName"></div>
+    <div class="field"><label>Groom's Parents</label><input id="vid-groomParents"></div>
+    <div class="field"><label>Bride Name</label><input id="vid-brideName"></div>
+    <div class="field"><label>Bride's Parents</label><input id="vid-brideParents"></div>
+    <div class="field"><label>Function Name</label><input id="vid-functionName"></div>
+    <div class="field"><label>Date</label><input id="vid-date"></div>
+    <div class="field"><label>Venue</label><input id="vid-venue"></div>
+  </div>
+
+  <div class="video-tab-panel" id="vtab-image">
+    <div class="video-photo-slot">
+      <img id="vid-photo1-preview" alt="">
+      <div class="vp-label">Opening / Couple Photo<input type="file" accept="image/*" id="vid-photo1-file"></div>
+    </div>
+    <div class="video-photo-slot">
+      <img id="vid-photo2-preview" alt="">
+      <div class="vp-label">Family Photo<input type="file" accept="image/*" id="vid-photo2-file"></div>
+    </div>
+    <div class="video-photo-slot">
+      <img id="vid-photo3-preview" alt="">
+      <div class="vp-label">Closing Photo<input type="file" accept="image/*" id="vid-photo3-file"></div>
+    </div>
+    <div class="field"><label>Background Music (mp3, optional)</label><input type="file" accept="audio/*" id="vid-audio-file"></div>
+  </div>
+
+  <div id="video-canvas-wrap"><canvas id="video-canvas" width="720" height="1280"></canvas></div>
+
+  <button type="button" class="gold-btn apply-btn" id="video-preview-btn" style="border:none;justify-content:center;width:100%;">👁 Preview</button>
+  <button type="button" class="gold-btn apply-btn" id="video-download-btn" style="border:none;justify-content:center;width:100%;margin-top:10px;background:linear-gradient(135deg,var(--pink),var(--pink-deep));">⬇ Generate Video</button>
+  <div id="video-status"></div>
 </div>
 
 <script>
@@ -1513,60 +1578,6 @@ window.addEventListener('scroll', ()=>{
   if(!reduceMotion) spawnScrollSpark();
 },{passive:true});
 
-/* ===================== AUTO-SCROLL TOUR ===================== */
-let autoScrolling=false, autoScrollRAF=null, autoScrollWaitTimeout=null;
-function getSectionStops(){
-  const els = $$('.section, #hero, footer');
-  return els.map(el=>el.offsetTop).sort((a,b)=>a-b);
-}
-function smoothScrollToY(targetY, onDone){
-  function step(){
-    if(!autoScrolling){ return; }
-    const current = window.scrollY;
-    const diff = targetY - current;
-    if(Math.abs(diff) < 2){ window.scrollTo({top:targetY, behavior:'auto'}); onDone(); return; }
-    // ~2x faster than the original pace, eased by us — behavior:'auto' stops
-    // this from fighting the page's CSS scroll-behavior:smooth, which was
-    // silently cancelling almost all of this motion before.
-    window.scrollTo({top: current + diff*0.14, behavior:'auto'});
-    autoScrollRAF = requestAnimationFrame(step);
-  }
-  autoScrollRAF = requestAnimationFrame(step);
-}
-function startAutoScroll(){
-  autoScrolling=true; $('#autoscroll-btn').textContent='⏸';
-  const total = document.documentElement.scrollHeight - window.innerHeight;
-  const stops = getSectionStops().filter(y => y > window.scrollY + 40);
-  stops.push(total);
-
-  function goToNext(idx){
-    if(!autoScrolling) return;
-    if(idx >= stops.length){ stopAutoScroll(); return; }
-    const target = Math.min(stops[idx], total);
-    smoothScrollToY(target, ()=>{
-      if(!autoScrolling) return;
-      const pause = 1500 + Math.random()*500; // 1.5–2s pause at each section
-      autoScrollWaitTimeout = setTimeout(()=> goToNext(idx+1), pause);
-    });
-  }
-  goToNext(0);
-}
-function stopAutoScroll(){
-  autoScrolling=false;
-  $('#autoscroll-btn').textContent='▶';
-  cancelAnimationFrame(autoScrollRAF);
-  clearTimeout(autoScrollWaitTimeout);
-}
-document.addEventListener('DOMContentLoaded', ()=>{
-  $('#autoscroll-btn').addEventListener('click', ()=> autoScrolling ? stopAutoScroll() : startAutoScroll());
-  // Stop instantly on any user interaction, except the play/pause button's own click
-  ['wheel','touchstart','keydown'].forEach(evt=> window.addEventListener(evt, ()=>{ if(autoScrolling) stopAutoScroll(); },{passive:true}));
-  window.addEventListener('click', e=>{
-    if(!autoScrolling) return;
-    if(e.target.closest('#autoscroll-btn')) return; // avoid canceling its own start
-    stopAutoScroll();
-  });
-});
 
 /* ===================== MUSIC (config URL, else generative ambient) ===================== */
 const audioEl = new Audio(); audioEl.loop=true; audioEl.volume=0.4;
@@ -1678,7 +1689,6 @@ function openInvitation(){
     document.body.style.overflow='auto';
     observeReveals();
     $('#hero-bg').classList.add('zoom-in'); // couple photo / motif slow zoom
-    setTimeout(()=>{ if(!autoScrolling) startAutoScroll(); }, 3200);
     if(CONFIG.coupleImageUrl){ setTimeout(()=>{ $('#photo-popup').style.display='flex'; }, 1600); }
   },900);
 }
@@ -1911,6 +1921,7 @@ function initOwnerPanel(){
   isOwner = params.get('edit') === CONFIG.ownerKey && !!CONFIG.ownerKey;
   if(!isOwner) return;
   $('#customize-btn').style.display='flex';
+  $('#create-video-btn').style.display='flex';
 
   const themeSelect = $('#cfg-theme');
   Object.keys(THEMES).forEach(key=>{
@@ -1973,6 +1984,307 @@ function initOwnerPanel(){
       status.textContent = 'Could not read the page to save a file. Tell Claude what you changed and ask it to bake it into the file for you.';
     }
   });
+
+  initVideoPanel();
+}
+
+/* =========================================================================
+   VIDEO CREATOR — owner-only. Builds a short vertical video (photos + text
+   + optional music) entirely in the browser and downloads it as a real
+   video file. No server, no upload anywhere — everything happens on this
+   device using <canvas> to draw each scene and MediaRecorder to capture it.
+
+   Scenes are simple and fixed (one default template) on purpose: Opening →
+   Names → Message → 3 photo cards. Swap in more templates later by adding
+   more entries to VIDEO_TEMPLATES and a template picker, without touching
+   the recording logic below.
+   ========================================================================= */
+let VIDEO_DATA = {};
+const videoAudioEl = new Audio();
+videoAudioEl.crossOrigin = 'anonymous';
+let videoImages = {}; // loaded <img> elements keyed by photo1/photo2/photo3
+
+function fillVideoPanel(){
+  VIDEO_DATA = {
+    message: CONFIG.welcomeMessage || '',
+    groomName: CONFIG.groomName || '',
+    groomParents: CONFIG.groomParents || '',
+    brideName: CONFIG.brideName || '',
+    brideParents: CONFIG.brideParents || '',
+    functionName: CONFIG.eventTitle || '',
+    date: CONFIG.displayDate || '',
+    venue: CONFIG.venueName || '',
+    photo1: CONFIG.coupleImageUrl || (CONFIG.galleryImages||[])[0] || '',
+    photo2: (CONFIG.galleryImages||[])[1] || CONFIG.coupleImageUrl || '',
+    photo3: (CONFIG.galleryImages||[])[2] || CONFIG.coupleImageUrl || '',
+    audioUrl: CONFIG.backgroundMusicUrl || ''
+  };
+  $('#vid-message').value = VIDEO_DATA.message;
+  $('#vid-groomName').value = VIDEO_DATA.groomName;
+  $('#vid-groomParents').value = VIDEO_DATA.groomParents;
+  $('#vid-brideName').value = VIDEO_DATA.brideName;
+  $('#vid-brideParents').value = VIDEO_DATA.brideParents;
+  $('#vid-functionName').value = VIDEO_DATA.functionName;
+  $('#vid-date').value = VIDEO_DATA.date;
+  $('#vid-venue').value = VIDEO_DATA.venue;
+  $('#vid-photo1-preview').src = VIDEO_DATA.photo1 || '';
+  $('#vid-photo2-preview').src = VIDEO_DATA.photo2 || '';
+  $('#vid-photo3-preview').src = VIDEO_DATA.photo3 || '';
+  videoImages = {};
+}
+function readVideoPanel(){
+  VIDEO_DATA.message = $('#vid-message').value;
+  VIDEO_DATA.groomName = $('#vid-groomName').value;
+  VIDEO_DATA.groomParents = $('#vid-groomParents').value;
+  VIDEO_DATA.brideName = $('#vid-brideName').value;
+  VIDEO_DATA.brideParents = $('#vid-brideParents').value;
+  VIDEO_DATA.functionName = $('#vid-functionName').value;
+  VIDEO_DATA.date = $('#vid-date').value;
+  VIDEO_DATA.venue = $('#vid-venue').value;
+}
+
+function loadImage(src){
+  return new Promise(resolve=>{
+    if(!src){ resolve(null); return; }
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = ()=> resolve(img);
+    img.onerror = ()=> resolve(null);
+    img.src = src;
+  });
+}
+async function ensureVideoImagesLoaded(){
+  const keys = ['photo1','photo2','photo3'];
+  for(const k of keys){
+    if(!videoImages[k] || videoImages[k].src !== VIDEO_DATA[k]){
+      videoImages[k] = await loadImage(VIDEO_DATA[k]);
+    }
+  }
+}
+
+/* ---------- drawing helpers ---------- */
+function themeColor(varName, fallback){
+  const v = getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+  return v || fallback;
+}
+function wrapText(ctx, text, maxWidth){
+  const words = String(text||'').split(/\s+/).filter(Boolean);
+  const lines = []; let line = '';
+  words.forEach(w=>{
+    const test = line ? line+' '+w : w;
+    if(ctx.measureText(test).width > maxWidth && line){ lines.push(line); line = w; }
+    else line = test;
+  });
+  if(line) lines.push(line);
+  return lines;
+}
+function drawCenteredLines(ctx, lines, centerX, centerY, lineHeight, font, color){
+  ctx.font = font; ctx.fillStyle = color; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  const totalH = lines.length * lineHeight;
+  lines.forEach((line,i)=> ctx.fillText(line, centerX, centerY - totalH/2 + lineHeight*(i+0.5)));
+}
+function drawBg(ctx, w, h){
+  const g = ctx.createLinearGradient(0,0,w,h);
+  g.addColorStop(0, themeColor('--bg1','#fff8ef'));
+  g.addColorStop(0.55, themeColor('--bg2','#ffe9d6'));
+  g.addColorStop(1, themeColor('--bg3','#ffdfc4'));
+  ctx.fillStyle = g; ctx.fillRect(0,0,w,h);
+}
+function drawCoverImage(ctx, img, w, h, zoom){
+  if(!img){ ctx.fillStyle='rgba(0,0,0,0.08)'; ctx.fillRect(0,0,w,h); return; }
+  const scale = Math.max(w/img.width, h/img.height) * (1 + zoom*0.12);
+  const dw = img.width*scale, dh = img.height*scale;
+  ctx.drawImage(img, (w-dw)/2, (h-dh)/2, dw, dh);
+  const g = ctx.createLinearGradient(0,h*0.55,0,h);
+  g.addColorStop(0,'rgba(0,0,0,0)'); g.addColorStop(1,'rgba(0,0,0,0.55)');
+  ctx.fillStyle=g; ctx.fillRect(0,h*0.55,w,h*0.45);
+}
+
+/* ---------- scene definitions ---------- */
+/* Each scene gets (ctx, w, h, progress 0→1 within its own duration). */
+function sceneOpening(ctx,w,h,p){
+  drawBg(ctx,w,h);
+  const ink = themeColor('--ink','#4a2f1d'), gold = themeColor('--gold-deep','#9c7328');
+  ctx.globalAlpha = Math.min(1, p*2);
+  drawCenteredLines(ctx, ["You're Invited"], w/2, h*0.46, 64, "italic 52px 'Playfair Display', serif", ink);
+  drawCenteredLines(ctx, [(VIDEO_DATA.functionName||'').toUpperCase()], w/2, h*0.56, 30, "20px 'Cinzel', serif", gold);
+  ctx.globalAlpha = 1;
+}
+function sceneNames(ctx,w,h,p){
+  drawBg(ctx,w,h);
+  const ink = themeColor('--ink','#4a2f1d'), gold = themeColor('--gold-deep','#9c7328');
+  const scale = 0.9 + Math.min(1,p*3)*0.1;
+  ctx.save(); ctx.translate(w/2,h*0.42); ctx.scale(scale,scale); ctx.translate(-w/2,-h*0.42);
+  drawCenteredLines(ctx,[VIDEO_DATA.brideName||''], w/2, h*0.36, 66, "56px 'Playfair Display', serif", ink);
+  drawCenteredLines(ctx,['&'], w/2, h*0.44, 40, "italic 34px 'Playfair Display', serif", gold);
+  drawCenteredLines(ctx,[VIDEO_DATA.groomName||''], w/2, h*0.52, 66, "56px 'Playfair Display', serif", ink);
+  ctx.restore();
+  ctx.font = "18px 'Cormorant Garamond', serif"; ctx.fillStyle = themeColor('--ink-soft','#7a5a3f');
+  const lines = wrapText(ctx, `${VIDEO_DATA.brideParents||''}   •   ${VIDEO_DATA.groomParents||''}`, w*0.8);
+  drawCenteredLines(ctx, lines, w/2, h*0.66, 26, "18px 'Cormorant Garamond', serif", themeColor('--ink-soft','#7a5a3f'));
+}
+function sceneMessage(ctx,w,h,p){
+  drawBg(ctx,w,h);
+  const ink = themeColor('--ink','#4a2f1d');
+  ctx.font = "italic 30px 'Cormorant Garamond', serif";
+  const lines = wrapText(ctx, VIDEO_DATA.message, w*0.78);
+  ctx.globalAlpha = Math.min(1,p*2);
+  drawCenteredLines(ctx, lines, w/2, h*0.5, 42, "italic 30px 'Cormorant Garamond', serif", ink);
+  ctx.globalAlpha = 1;
+}
+function makePhotoScene(imgKey, captionLines){
+  return (ctx,w,h,p)=>{
+    drawCoverImage(ctx, videoImages[imgKey], w, h, p);
+    drawCenteredLines(ctx, captionLines, w/2, h*0.84, 34, "26px 'Playfair Display', serif", '#fff8ef');
+  };
+}
+function buildScenes(){
+  return [
+    { draw: sceneOpening, duration: 3000 },
+    { draw: sceneNames, duration: 3800 },
+    { draw: sceneMessage, duration: 3800 },
+    { draw: makePhotoScene('photo1', [VIDEO_DATA.functionName||'', VIDEO_DATA.date||'']), duration: 4000 },
+    { draw: makePhotoScene('photo2', ['Together with our families']), duration: 4000 },
+    { draw: makePhotoScene('photo3', [VIDEO_DATA.venue||'', 'We can\u2019t wait to celebrate with you']), duration: 4200 }
+  ];
+}
+
+/* ---------- timeline playback (shared by Preview and Generate) ---------- */
+const TRANSITION_MS = 500;
+function runTimeline(canvas, scenes, onFrame, onDone){
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width, h = canvas.height;
+  const total = scenes.reduce((s,sc)=>s+sc.duration, 0);
+  const start = performance.now();
+  function frame(now){
+    const elapsed = now - start;
+    if(elapsed >= total){
+      const last = scenes[scenes.length-1];
+      last.draw(ctx,w,h,1);
+      onDone && onDone();
+      return;
+    }
+    let t = elapsed, idx = 0;
+    while(idx < scenes.length-1 && t > scenes[idx].duration){ t -= scenes[idx].duration; idx++; }
+    const sc = scenes[idx];
+    const p = Math.min(1, t / sc.duration);
+    sc.draw(ctx,w,h,p);
+    // crossfade into next scene during the last TRANSITION_MS
+    const remaining = sc.duration - t;
+    if(remaining < TRANSITION_MS && idx < scenes.length-1){
+      const alpha = 1 - (remaining/TRANSITION_MS);
+      ctx.save(); ctx.globalAlpha = alpha;
+      scenes[idx+1].draw(ctx,w,h,0);
+      ctx.restore();
+    }
+    onFrame && onFrame(elapsed,total);
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+  return total;
+}
+
+function pickSupportedMime(){
+  const candidates = [
+    'video/mp4;codecs=h264,aac',
+    'video/mp4',
+    'video/webm;codecs=vp9,opus',
+    'video/webm;codecs=vp8,opus',
+    'video/webm'
+  ];
+  return candidates.find(m => window.MediaRecorder && MediaRecorder.isTypeSupported(m)) || '';
+}
+
+async function previewVideo(){
+  readVideoPanel();
+  await ensureVideoImagesLoaded();
+  const canvas = $('#video-canvas');
+  const scenes = buildScenes();
+  const status = $('#video-status');
+  status.textContent = 'Playing preview…';
+  runTimeline(canvas, scenes, null, ()=>{ status.textContent = 'Preview finished. Tap Generate Video when ready.'; });
+}
+
+async function generateVideo(){
+  if(!window.MediaRecorder){
+    $('#video-status').textContent = 'This browser can\u2019t record video. Try Chrome on Android, or Chrome/Edge on a computer.';
+    return;
+  }
+  readVideoPanel();
+  await ensureVideoImagesLoaded();
+  const canvas = $('#video-canvas');
+  const scenes = buildScenes();
+  const status = $('#video-status');
+  const mimeType = pickSupportedMime();
+  if(!mimeType){ status.textContent = 'This browser doesn\u2019t support video recording. Try a recent Chrome or Edge.'; return; }
+
+  const stream = canvas.captureStream(30);
+  let hasAudio = false;
+  if(VIDEO_DATA.audioUrl){
+    try{
+      videoAudioEl.src = VIDEO_DATA.audioUrl;
+      videoAudioEl.currentTime = 0;
+      videoAudioEl.loop = true;
+      const audioStream = videoAudioEl.captureStream ? videoAudioEl.captureStream() : videoAudioEl.mozCaptureStream();
+      audioStream.getAudioTracks().forEach(t=> stream.addTrack(t));
+      hasAudio = true;
+    }catch(err){ console.warn('Audio capture not supported, video will be silent:', err); }
+  }
+
+  const recorder = new MediaRecorder(stream, {mimeType, videoBitsPerSecond: 4_000_000});
+  const chunks = [];
+  recorder.ondataavailable = e=>{ if(e.data && e.data.size) chunks.push(e.data); };
+  recorder.onstop = ()=>{
+    if(hasAudio) videoAudioEl.pause();
+    const blob = new Blob(chunks, {type: mimeType.split(';')[0]});
+    const ext = mimeType.includes('mp4') ? 'mp4' : 'webm';
+    const filename = `${currentWeddingId || CONFIG.brideName+'-'+CONFIG.groomName || 'wedding'}-video.${ext}`;
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = filename; a.click();
+    URL.revokeObjectURL(url);
+    status.textContent = `Downloaded ${filename}${ext==='webm' ? ' (webm — plays fine on WhatsApp/most phones; convert to mp4 with any free online converter if your customer specifically needs .mp4)' : ''}.`;
+  };
+
+  status.textContent = 'Recording your video… keep this tab open and visible.';
+  recorder.start(250);
+  if(hasAudio){ videoAudioEl.play().catch(()=>{}); }
+  const total = runTimeline(canvas, scenes,
+    (elapsed,tot)=>{ status.textContent = `Recording… ${Math.round(elapsed/1000)}s / ${Math.round(tot/1000)}s`; },
+    ()=>{ setTimeout(()=> recorder.stop(), 200); }
+  );
+}
+
+function initVideoPanel(){
+  $$('.video-tab').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      $$('.video-tab').forEach(b=> b.classList.remove('active'));
+      $$('.video-tab-panel').forEach(p=> p.classList.remove('active'));
+      btn.classList.add('active');
+      $('#vtab-'+btn.dataset.vtab).classList.add('active');
+    });
+  });
+
+  [['photo1','1'],['photo2','2'],['photo3','3']].forEach(([key])=>{
+    $(`#vid-${key}-file`).addEventListener('change', e=>{
+      const file = e.target.files[0]; if(!file) return;
+      const reader = new FileReader();
+      reader.onload = ()=>{
+        VIDEO_DATA[key] = reader.result;
+        $(`#vid-${key}-preview`).src = reader.result;
+        videoImages[key] = null; // force reload next render
+      };
+      reader.readAsDataURL(file);
+    });
+  });
+  $('#vid-audio-file').addEventListener('change', e=>{
+    const file = e.target.files[0]; if(!file) return;
+    VIDEO_DATA.audioUrl = URL.createObjectURL(file);
+  });
+
+  $('#create-video-btn').addEventListener('click', ()=>{ fillVideoPanel(); $('#video-panel').classList.add('open'); });
+  $('#close-video').addEventListener('click', ()=> $('#video-panel').classList.remove('open'));
+  $('#video-preview-btn').addEventListener('click', previewVideo);
+  $('#video-download-btn').addEventListener('click', generateVideo);
 }
 
 /* Rebuilds this exact file with the current CONFIG values written in,
