@@ -728,6 +728,7 @@ footer p{color:var(--ink-soft);}
   </div>
 
   <div class="video-tab-panel active" id="vtab-details">
+    <div class="field"><label>Video Template</label><select id="vid-template"></select></div>
     <div class="field"><label>Message</label><textarea id="vid-message"></textarea></div>
     <div class="field"><label>Groom Name</label><input id="vid-groomName"></div>
     <div class="field"><label>Groom's Parents</label><input id="vid-groomParents"></div>
@@ -2100,8 +2101,146 @@ function drawCoverImage(ctx, img, w, h, zoom){
   ctx.fillStyle=g; ctx.fillRect(0,h*0.55,w,h*0.45);
 }
 
-/* ---------- scene definitions ---------- */
-/* Each scene gets (ctx, w, h, progress 0→1 within its own duration). */
+/* ---------- shared decorative-drawing helpers (original artwork, code-drawn — not copied from any reference app) ---------- */
+function monogramText(){
+  return (VIDEO_DATA.brideName||'?').trim().charAt(0).toUpperCase() + ' & ' + (VIDEO_DATA.groomName||'?').trim().charAt(0).toUpperCase();
+}
+function seededRandom(seed){
+  let s = seed % 2147483647; if(s<=0) s += 2147483646;
+  return ()=>{ s = (s*16807) % 2147483647; return (s-1)/2147483646; };
+}
+function easeOutCubic(x){ return 1 - Math.pow(1-x,3); }
+function drawPetals(ctx,w,h,tMs,count,color1,color2){
+  for(let i=0;i<count;i++){
+    const rnd = seededRandom(i*97+1);
+    const speed = 26 + rnd()*22;
+    const xBase = rnd()*w;
+    const phase = rnd()*Math.PI*2;
+    const cycle = h + 60;
+    const y = (((tMs*0.001*speed) + rnd()*cycle) % cycle) - 30;
+    const x = xBase + Math.sin(tMs*0.0011 + phase)*22;
+    const size = 5 + rnd()*6;
+    const rot = tMs*0.0009 + phase;
+    ctx.save(); ctx.translate(x,y); ctx.rotate(rot);
+    ctx.globalAlpha = 0.75;
+    ctx.fillStyle = i%2===0 ? color1 : color2;
+    ctx.beginPath(); ctx.ellipse(0,0,size,size*0.6,0,0,Math.PI*2); ctx.fill();
+    ctx.restore();
+  }
+}
+function drawMonogramCentered(ctx,w,cy,alpha,color){
+  ctx.save(); ctx.globalAlpha = Math.max(0,Math.min(1,alpha));
+  ctx.font = "60px 'Cinzel Decorative', serif"; ctx.fillStyle = color;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText(monogramText(), w/2, cy);
+  ctx.restore();
+}
+function drawFrameBorder(ctx,w,h,margin,color,progress){
+  const rw = w-margin*2, rh = h-margin*2;
+  const perim = 2*(rw+rh);
+  ctx.save();
+  ctx.strokeStyle = color; ctx.lineWidth = 3;
+  ctx.setLineDash([perim*Math.max(0,Math.min(1,progress)), perim]);
+  ctx.lineDashOffset = 0;
+  ctx.strokeRect(margin, margin, rw, rh);
+  ctx.setLineDash([]);
+  ctx.restore();
+}
+function drawScrollReveal(ctx,w,h,progress,innerDraw){
+  const openH = h*0.42*easeOutCubic(progress);
+  const cy = h/2, marginX = w*0.1, rollR = 24;
+  ctx.save();
+  ctx.beginPath(); ctx.rect(marginX, cy-openH, w-marginX*2, openH*2); ctx.clip();
+  innerDraw();
+  ctx.restore();
+  ctx.save();
+  ctx.fillStyle = '#caa156';
+  ctx.beginPath(); ctx.ellipse(w/2, cy-openH, w/2-marginX+12, rollR, 0,0,Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(w/2, cy+openH, w/2-marginX+12, rollR, 0,0,Math.PI*2); ctx.fill();
+  ctx.strokeStyle = 'rgba(0,0,0,0.15)'; ctx.lineWidth=1;
+  ctx.stroke();
+  ctx.restore();
+}
+function drawIrisReveal(ctx,w,h,progress,innerDraw){
+  const maxR = Math.hypot(w,h)/2*1.05;
+  const r = maxR*easeOutCubic(progress);
+  ctx.save();
+  ctx.beginPath(); ctx.arc(w/2,h/2,r,0,Math.PI*2); ctx.clip();
+  innerDraw();
+  ctx.restore();
+}
+
+/* ---------- decorative templates (each an original palette + reveal style) ---------- */
+const DECOR_THEMES = {
+  goldenScroll:{ label:'Golden Scroll Reveal', bg:['#fff8ef','#ffe9d6','#ffdfc4'], accent:'#c9973f', ink:'#4a2f1d', reveal:'scroll' },
+  floralBloom:{ label:'Floral Bloom Reveal', bg:['#fff0f3','#ffd9e2','#ffc7d4'], accent:'#e8778f', ink:'#5a2a34', reveal:'iris' },
+  royalFrame:{ label:'Royal Frame Reveal', bg:['#2b190d','#20130a','#150c06'], accent:'#d3ad66', ink:'#faf3e4', reveal:'frame' }
+};
+function buildDecorativeScenes(theme){
+  const bgFn = (ctx,w,h)=>{
+    const g = ctx.createLinearGradient(0,0,w,h);
+    g.addColorStop(0, theme.bg[0]); g.addColorStop(0.55, theme.bg[1]); g.addColorStop(1, theme.bg[2]);
+    ctx.fillStyle = g; ctx.fillRect(0,0,w,h);
+  };
+  const sceneIntro = (ctx,w,h,p,tMs)=>{
+    bgFn(ctx,w,h);
+    drawPetals(ctx,w,h,tMs,24,theme.accent,theme.ink);
+    ctx.globalAlpha = Math.min(1,p*2);
+    drawCenteredLines(ctx, [(VIDEO_DATA.functionName||'Wedding Invitation')], w/2, h*0.5, 34, "22px 'Cinzel', serif", theme.ink);
+    ctx.globalAlpha = 1;
+  };
+  const sceneReveal = (ctx,w,h,p,tMs)=>{
+    bgFn(ctx,w,h);
+    drawPetals(ctx,w,h,tMs,12,theme.accent,theme.ink);
+    const inner = ()=>{ bgFn(ctx,w,h); drawMonogramCentered(ctx,w,h*0.5, Math.min(1,p*1.4), theme.ink); };
+    if(theme.reveal==='scroll') drawScrollReveal(ctx,w,h,p,inner);
+    else if(theme.reveal==='iris') drawIrisReveal(ctx,w,h,p,inner);
+    else { inner(); drawFrameBorder(ctx,w,h,40,theme.accent,p); }
+  };
+  const sceneNames = (ctx,w,h,p)=>{
+    bgFn(ctx,w,h);
+    drawFrameBorder(ctx,w,h,36,theme.accent,1);
+    const scale = 0.9 + Math.min(1,p*3)*0.1;
+    ctx.save(); ctx.translate(w/2,h*0.42); ctx.scale(scale,scale); ctx.translate(-w/2,-h*0.42);
+    drawCenteredLines(ctx,[VIDEO_DATA.brideName||''], w/2, h*0.36, 58, "48px 'Playfair Display', serif", theme.ink);
+    drawCenteredLines(ctx,['&'], w/2, h*0.44, 36, "italic 30px 'Playfair Display', serif", theme.accent);
+    drawCenteredLines(ctx,[VIDEO_DATA.groomName||''], w/2, h*0.52, 58, "48px 'Playfair Display', serif", theme.ink);
+    ctx.restore();
+  };
+  const sceneDetails = (ctx,w,h,p)=>{
+    bgFn(ctx,w,h);
+    drawFrameBorder(ctx,w,h,36,theme.accent,1);
+    ctx.globalAlpha = Math.min(1,p*2);
+    drawCenteredLines(ctx, [VIDEO_DATA.functionName||'', VIDEO_DATA.date||'', VIDEO_DATA.venue||''], w/2, h*0.5, 40, "22px 'Cormorant Garamond', serif", theme.ink);
+    ctx.globalAlpha = 1;
+  };
+  const sceneClosing = (ctx,w,h,p,tMs)=>{
+    bgFn(ctx,w,h);
+    drawPetals(ctx,w,h,tMs,20,theme.accent,theme.ink);
+    const img = videoImages.photo1;
+    if(img){
+      const r = Math.min(w,h)*0.28;
+      ctx.save();
+      ctx.beginPath(); ctx.arc(w/2,h*0.4,r,0,Math.PI*2); ctx.clip();
+      const scale = Math.max(r*2/img.width, r*2/img.height)*(1+p*0.08);
+      ctx.drawImage(img, w/2-img.width*scale/2, h*0.4-img.height*scale/2, img.width*scale, img.height*scale);
+      ctx.restore();
+      ctx.save(); ctx.strokeStyle = theme.accent; ctx.lineWidth = 6;
+      ctx.beginPath(); ctx.arc(w/2,h*0.4,r,0,Math.PI*2); ctx.stroke(); ctx.restore();
+    }
+    const lines = wrapText(ctx, VIDEO_DATA.message||'', w*0.75);
+    drawCenteredLines(ctx, lines, w/2, img?h*0.74:h*0.5, 30, "italic 22px 'Cormorant Garamond', serif", theme.ink);
+  };
+  return [
+    { draw:sceneIntro, duration:2600 },
+    { draw:sceneReveal, duration:2800 },
+    { draw:sceneNames, duration:3200 },
+    { draw:sceneDetails, duration:3000 },
+    { draw:sceneClosing, duration:3400 }
+  ];
+}
+
+/* ---------- Photo Story template (real customer photos, Ken Burns) ---------- */
 function sceneOpening(ctx,w,h,p){
   drawBg(ctx,w,h);
   const ink = themeColor('--ink','#4a2f1d'), gold = themeColor('--gold-deep','#9c7328');
@@ -2138,7 +2277,7 @@ function makePhotoScene(imgKey, captionLines){
     drawCenteredLines(ctx, captionLines, w/2, h*0.84, 34, "26px 'Playfair Display', serif", '#fff8ef');
   };
 }
-function buildScenes(){
+function buildPhotoStoryScenes(){
   return [
     { draw: sceneOpening, duration: 3000 },
     { draw: sceneNames, duration: 3800 },
@@ -2148,6 +2287,14 @@ function buildScenes(){
     { draw: makePhotoScene('photo3', [VIDEO_DATA.venue||'', 'We can\u2019t wait to celebrate with you']), duration: 4200 }
   ];
 }
+
+/* ---------- template registry — add more here later without touching playback ---------- */
+const VIDEO_TEMPLATES = {
+  goldenScroll:{ label:DECOR_THEMES.goldenScroll.label, buildScenes:()=>buildDecorativeScenes(DECOR_THEMES.goldenScroll) },
+  floralBloom:{ label:DECOR_THEMES.floralBloom.label, buildScenes:()=>buildDecorativeScenes(DECOR_THEMES.floralBloom) },
+  royalFrame:{ label:DECOR_THEMES.royalFrame.label, buildScenes:()=>buildDecorativeScenes(DECOR_THEMES.royalFrame) },
+  photoStory:{ label:'Photo Story (Ken Burns)', buildScenes: buildPhotoStoryScenes }
+};
 
 /* ---------- timeline playback (shared by Preview and Generate) ---------- */
 const TRANSITION_MS = 500;
@@ -2160,7 +2307,7 @@ function runTimeline(canvas, scenes, onFrame, onDone){
     const elapsed = now - start;
     if(elapsed >= total){
       const last = scenes[scenes.length-1];
-      last.draw(ctx,w,h,1);
+      last.draw(ctx,w,h,1,elapsed);
       onDone && onDone();
       return;
     }
@@ -2168,13 +2315,13 @@ function runTimeline(canvas, scenes, onFrame, onDone){
     while(idx < scenes.length-1 && t > scenes[idx].duration){ t -= scenes[idx].duration; idx++; }
     const sc = scenes[idx];
     const p = Math.min(1, t / sc.duration);
-    sc.draw(ctx,w,h,p);
+    sc.draw(ctx,w,h,p,elapsed);
     // crossfade into next scene during the last TRANSITION_MS
     const remaining = sc.duration - t;
     if(remaining < TRANSITION_MS && idx < scenes.length-1){
       const alpha = 1 - (remaining/TRANSITION_MS);
       ctx.save(); ctx.globalAlpha = alpha;
-      scenes[idx+1].draw(ctx,w,h,0);
+      scenes[idx+1].draw(ctx,w,h,0,elapsed);
       ctx.restore();
     }
     onFrame && onFrame(elapsed,total);
@@ -2199,7 +2346,8 @@ async function previewVideo(){
   readVideoPanel();
   await ensureVideoImagesLoaded();
   const canvas = $('#video-canvas');
-  const scenes = buildScenes();
+  const templateKey = $('#vid-template').value;
+  const scenes = (VIDEO_TEMPLATES[templateKey] || VIDEO_TEMPLATES.goldenScroll).buildScenes();
   const status = $('#video-status');
   status.textContent = 'Playing preview…';
   runTimeline(canvas, scenes, null, ()=>{ status.textContent = 'Preview finished. Tap Generate Video when ready.'; });
@@ -2213,7 +2361,8 @@ async function generateVideo(){
   readVideoPanel();
   await ensureVideoImagesLoaded();
   const canvas = $('#video-canvas');
-  const scenes = buildScenes();
+  const templateKey = $('#vid-template').value;
+  const scenes = (VIDEO_TEMPLATES[templateKey] || VIDEO_TEMPLATES.goldenScroll).buildScenes();
   const status = $('#video-status');
   const mimeType = pickSupportedMime();
   if(!mimeType){ status.textContent = 'This browser doesn\u2019t support video recording. Try a recent Chrome or Edge.'; return; }
@@ -2255,6 +2404,13 @@ async function generateVideo(){
 }
 
 function initVideoPanel(){
+  const templateSelect = $('#vid-template');
+  Object.keys(VIDEO_TEMPLATES).forEach(key=>{
+    const opt = document.createElement('option');
+    opt.value = key; opt.textContent = VIDEO_TEMPLATES[key].label;
+    templateSelect.appendChild(opt);
+  });
+
   $$('.video-tab').forEach(btn=>{
     btn.addEventListener('click', ()=>{
       $$('.video-tab').forEach(b=> b.classList.remove('active'));
