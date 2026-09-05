@@ -2170,11 +2170,117 @@ function drawIrisReveal(ctx,w,h,progress,innerDraw){
   ctx.restore();
 }
 
-/* ---------- decorative templates (each an original palette + reveal style) ---------- */
+/* ---------- original decorative motifs (hand-coded vector paths — marigold/mandap and floral-vine/bird families) ---------- */
+function drawMarigoldFlower(ctx,x,y,r,petalColor,centerColor){
+  ctx.save(); ctx.translate(x,y);
+  for(let k=0;k<6;k++){
+    ctx.save(); ctx.rotate(k*Math.PI/3);
+    ctx.fillStyle = petalColor;
+    ctx.beginPath(); ctx.ellipse(0,-r*0.55,r*0.42,r*0.65,0,0,Math.PI*2); ctx.fill();
+    ctx.restore();
+  }
+  ctx.beginPath(); ctx.arc(0,0,r*0.38,0,Math.PI*2); ctx.fillStyle = centerColor; ctx.fill();
+  ctx.restore();
+}
+function drawMarigoldGarland(ctx,x1,y1,x2,y2,sag,petalColor,centerColor,count){
+  const midX=(x1+x2)/2, midY=Math.max(y1,y2)+sag;
+  ctx.save();
+  ctx.strokeStyle='rgba(80,50,15,0.45)'; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.quadraticCurveTo(midX,midY,x2,y2); ctx.stroke();
+  ctx.restore();
+  for(let i=0;i<count;i++){
+    const t = i/(count-1);
+    const bx = (1-t)*(1-t)*x1 + 2*(1-t)*t*midX + t*t*x2;
+    const by = (1-t)*(1-t)*y1 + 2*(1-t)*t*midY + t*t*y2;
+    drawMarigoldFlower(ctx,bx,by, i%2===0?9:7, petalColor, centerColor);
+  }
+}
+function drawMandapArch(ctx,w,h,color){
+  const topY = h*0.055, pillarW = w*0.045, pillarH = h*0.15;
+  ctx.save(); ctx.fillStyle = color; ctx.globalAlpha = 0.9;
+  ctx.fillRect(w*0.08, topY, pillarW, pillarH);
+  ctx.fillRect(w*0.92-pillarW, topY, pillarW, pillarH);
+  ctx.beginPath();
+  ctx.moveTo(w*0.08, topY);
+  ctx.quadraticCurveTo(w/2, topY-h*0.06, w*0.92, topY);
+  ctx.lineTo(w*0.92, topY+9);
+  ctx.quadraticCurveTo(w/2, topY-h*0.06+9, w*0.08, topY+9);
+  ctx.closePath(); ctx.fill();
+  ctx.beginPath(); ctx.arc(w/2, topY-h*0.06-7, 7, 0, Math.PI*2); ctx.fill();
+  ctx.restore();
+}
+function drawHangingBells(ctx,w,topY,color,count){
+  ctx.save(); ctx.fillStyle = color; ctx.strokeStyle = 'rgba(80,50,15,0.4)'; ctx.lineWidth = 1;
+  for(let i=0;i<count;i++){
+    const t = (i+0.5)/count;
+    const x = w*0.08 + t*w*0.84;
+    const dropLen = 12 + (i%3)*7;
+    ctx.beginPath(); ctx.moveTo(x,topY); ctx.lineTo(x,topY+dropLen); ctx.stroke();
+    ctx.beginPath(); ctx.ellipse(x, topY+dropLen+6, 5,6,0,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(x-4,topY+dropLen+2); ctx.lineTo(x+4,topY+dropLen+2); ctx.stroke();
+  }
+  ctx.restore();
+}
+function drawVineBorder(ctx,w,h,color,side,tMs){
+  const x0 = side==='left' ? w*0.07 : w*0.93;
+  const dir = side==='left' ? 1 : -1;
+  const sway = (y)=> Math.sin(y*0.018 + tMs*0.0004)*16;
+  ctx.save(); ctx.strokeStyle = color; ctx.lineWidth = 2.5; ctx.lineJoin='round';
+  ctx.beginPath();
+  for(let y=0; y<=h; y+=h/40){
+    const x = x0 + dir*sway(y);
+    if(y===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+  for(let y=h*0.06; y<=h*0.96; y+=h/9){
+    const x = x0 + dir*sway(y);
+    ctx.save(); ctx.translate(x,y); ctx.rotate(dir*0.5);
+    ctx.fillStyle = color;
+    ctx.beginPath(); ctx.ellipse(0,0,7,4,0,0,Math.PI*2); ctx.fill();
+    ctx.restore();
+  }
+  ctx.restore();
+}
+function drawBirdSilhouette(ctx,x,y,size,color,phase){
+  const flap = Math.sin(phase)*0.35;
+  ctx.save(); ctx.translate(x,y);
+  ctx.strokeStyle = color; ctx.lineWidth = size*0.16; ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(-size, flap*size*0.5);
+  ctx.quadraticCurveTo(-size*0.3, -size*0.65-flap*size, 0, 0);
+  ctx.quadraticCurveTo(size*0.3, -size*0.65-flap*size, size, flap*size*0.5);
+  ctx.stroke();
+  ctx.restore();
+}
+function drawMotifDecor(ctx,w,h,theme,tMs){
+  switch(theme.motif){
+    case 'marigoldArch':
+      drawMandapArch(ctx,w,h,theme.motifColor);
+      drawMarigoldGarland(ctx, w*0.08, h*0.055+h*0.15, w*0.92, h*0.055+h*0.15, 28, theme.motifColor, theme.ink, 9);
+      break;
+    case 'marigoldBells':
+      drawHangingBells(ctx,w,h*0.045,theme.motifColor,10);
+      drawMarigoldGarland(ctx, w*0.05, h*0.045, w*0.95, h*0.045, 38, theme.motifColor, theme.ink, 11);
+      break;
+    case 'vineBirds':
+      drawVineBorder(ctx,w,h,theme.motifColor,'left',tMs);
+      drawVineBorder(ctx,w,h,theme.motifColor,'right',tMs);
+      drawBirdSilhouette(ctx, w*0.34, h*0.11, 20, theme.ink, tMs*0.002);
+      drawBirdSilhouette(ctx, w*0.66, h*0.11, 20, theme.ink, tMs*0.002+1.4);
+      break;
+    case 'vineOnly':
+      drawVineBorder(ctx,w,h,theme.motifColor,'left',tMs);
+      drawVineBorder(ctx,w,h,theme.motifColor,'right',tMs);
+      break;
+  }
+}
+
+/* ---------- decorative templates (original artwork: marigold/mandap family + floral-vine/bird family) ---------- */
 const DECOR_THEMES = {
-  goldenScroll:{ label:'Golden Scroll Reveal', bg:['#fff8ef','#ffe9d6','#ffdfc4'], accent:'#c9973f', ink:'#4a2f1d', reveal:'scroll' },
-  floralBloom:{ label:'Floral Bloom Reveal', bg:['#fff0f3','#ffd9e2','#ffc7d4'], accent:'#e8778f', ink:'#5a2a34', reveal:'iris' },
-  royalFrame:{ label:'Royal Frame Reveal', bg:['#2b190d','#20130a','#150c06'], accent:'#d3ad66', ink:'#faf3e4', reveal:'frame' }
+  marigoldMandap:{ label:'Marigold Mandap', bg:['#fff6e0','#ffe0a3','#ffd074'], accent:'#b5651d', ink:'#5b2a0e', motifColor:'#d99a3a', reveal:'scroll', motif:'marigoldArch' },
+  templeBells:{ label:'Temple Bells & Marigold', bg:['#3a1210','#2a0d0a','#1c0705'], accent:'#d3ad66', ink:'#faf3e4', motifColor:'#d3ad66', reveal:'frame', motif:'marigoldBells' },
+  floralVineBirds:{ label:'Floral Vine & Birds', bg:['#fff0f3','#ffd9e2','#ffc7d4'], accent:'#e8778f', ink:'#5a2a34', motifColor:'#d67ba8', reveal:'iris', motif:'vineBirds' },
+  gardenDoves:{ label:'Garden Doves', bg:['#f5faf0','#e8f5e0','#dcefda'], accent:'#7a9b5e', ink:'#33422a', motifColor:'#7a9b5e', reveal:'scroll', motif:'vineBirds' }
 };
 function buildDecorativeScenes(theme){
   const bgFn = (ctx,w,h)=>{
@@ -2184,21 +2290,23 @@ function buildDecorativeScenes(theme){
   };
   const sceneIntro = (ctx,w,h,p,tMs)=>{
     bgFn(ctx,w,h);
-    drawPetals(ctx,w,h,tMs,24,theme.accent,theme.ink);
+    drawMotifDecor(ctx,w,h,theme,tMs);
+    drawPetals(ctx,w,h,tMs,16,theme.accent,theme.ink);
     ctx.globalAlpha = Math.min(1,p*2);
     drawCenteredLines(ctx, [(VIDEO_DATA.functionName||'Wedding Invitation')], w/2, h*0.5, 34, "22px 'Cinzel', serif", theme.ink);
     ctx.globalAlpha = 1;
   };
   const sceneReveal = (ctx,w,h,p,tMs)=>{
     bgFn(ctx,w,h);
-    drawPetals(ctx,w,h,tMs,12,theme.accent,theme.ink);
+    drawMotifDecor(ctx,w,h,theme,tMs);
     const inner = ()=>{ bgFn(ctx,w,h); drawMonogramCentered(ctx,w,h*0.5, Math.min(1,p*1.4), theme.ink); };
     if(theme.reveal==='scroll') drawScrollReveal(ctx,w,h,p,inner);
     else if(theme.reveal==='iris') drawIrisReveal(ctx,w,h,p,inner);
     else { inner(); drawFrameBorder(ctx,w,h,40,theme.accent,p); }
   };
-  const sceneNames = (ctx,w,h,p)=>{
+  const sceneNames = (ctx,w,h,p,tMs)=>{
     bgFn(ctx,w,h);
+    drawMotifDecor(ctx,w,h,theme,tMs);
     drawFrameBorder(ctx,w,h,36,theme.accent,1);
     const scale = 0.9 + Math.min(1,p*3)*0.1;
     ctx.save(); ctx.translate(w/2,h*0.42); ctx.scale(scale,scale); ctx.translate(-w/2,-h*0.42);
@@ -2207,8 +2315,9 @@ function buildDecorativeScenes(theme){
     drawCenteredLines(ctx,[VIDEO_DATA.groomName||''], w/2, h*0.52, 58, "48px 'Playfair Display', serif", theme.ink);
     ctx.restore();
   };
-  const sceneDetails = (ctx,w,h,p)=>{
+  const sceneDetails = (ctx,w,h,p,tMs)=>{
     bgFn(ctx,w,h);
+    drawMotifDecor(ctx,w,h,theme,tMs);
     drawFrameBorder(ctx,w,h,36,theme.accent,1);
     ctx.globalAlpha = Math.min(1,p*2);
     drawCenteredLines(ctx, [VIDEO_DATA.functionName||'', VIDEO_DATA.date||'', VIDEO_DATA.venue||''], w/2, h*0.5, 40, "22px 'Cormorant Garamond', serif", theme.ink);
@@ -2216,20 +2325,21 @@ function buildDecorativeScenes(theme){
   };
   const sceneClosing = (ctx,w,h,p,tMs)=>{
     bgFn(ctx,w,h);
-    drawPetals(ctx,w,h,tMs,20,theme.accent,theme.ink);
+    drawMotifDecor(ctx,w,h,theme,tMs);
+    drawPetals(ctx,w,h,tMs,14,theme.accent,theme.ink);
     const img = videoImages.photo1;
     if(img){
-      const r = Math.min(w,h)*0.28;
+      const r = Math.min(w,h)*0.26;
       ctx.save();
-      ctx.beginPath(); ctx.arc(w/2,h*0.4,r,0,Math.PI*2); ctx.clip();
+      ctx.beginPath(); ctx.arc(w/2,h*0.42,r,0,Math.PI*2); ctx.clip();
       const scale = Math.max(r*2/img.width, r*2/img.height)*(1+p*0.08);
-      ctx.drawImage(img, w/2-img.width*scale/2, h*0.4-img.height*scale/2, img.width*scale, img.height*scale);
+      ctx.drawImage(img, w/2-img.width*scale/2, h*0.42-img.height*scale/2, img.width*scale, img.height*scale);
       ctx.restore();
       ctx.save(); ctx.strokeStyle = theme.accent; ctx.lineWidth = 6;
-      ctx.beginPath(); ctx.arc(w/2,h*0.4,r,0,Math.PI*2); ctx.stroke(); ctx.restore();
+      ctx.beginPath(); ctx.arc(w/2,h*0.42,r,0,Math.PI*2); ctx.stroke(); ctx.restore();
     }
-    const lines = wrapText(ctx, VIDEO_DATA.message||'', w*0.75);
-    drawCenteredLines(ctx, lines, w/2, img?h*0.74:h*0.5, 30, "italic 22px 'Cormorant Garamond', serif", theme.ink);
+    const lines = wrapText(ctx, VIDEO_DATA.message||'', w*0.7);
+    drawCenteredLines(ctx, lines, w/2, img?h*0.76:h*0.5, 30, "italic 22px 'Cormorant Garamond', serif", theme.ink);
   };
   return [
     { draw:sceneIntro, duration:2600 },
@@ -2290,9 +2400,10 @@ function buildPhotoStoryScenes(){
 
 /* ---------- template registry — add more here later without touching playback ---------- */
 const VIDEO_TEMPLATES = {
-  goldenScroll:{ label:DECOR_THEMES.goldenScroll.label, buildScenes:()=>buildDecorativeScenes(DECOR_THEMES.goldenScroll) },
-  floralBloom:{ label:DECOR_THEMES.floralBloom.label, buildScenes:()=>buildDecorativeScenes(DECOR_THEMES.floralBloom) },
-  royalFrame:{ label:DECOR_THEMES.royalFrame.label, buildScenes:()=>buildDecorativeScenes(DECOR_THEMES.royalFrame) },
+  marigoldMandap:{ label:DECOR_THEMES.marigoldMandap.label, buildScenes:()=>buildDecorativeScenes(DECOR_THEMES.marigoldMandap) },
+  templeBells:{ label:DECOR_THEMES.templeBells.label, buildScenes:()=>buildDecorativeScenes(DECOR_THEMES.templeBells) },
+  floralVineBirds:{ label:DECOR_THEMES.floralVineBirds.label, buildScenes:()=>buildDecorativeScenes(DECOR_THEMES.floralVineBirds) },
+  gardenDoves:{ label:DECOR_THEMES.gardenDoves.label, buildScenes:()=>buildDecorativeScenes(DECOR_THEMES.gardenDoves) },
   photoStory:{ label:'Photo Story (Ken Burns)', buildScenes: buildPhotoStoryScenes }
 };
 
